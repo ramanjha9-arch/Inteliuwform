@@ -3,201 +3,2475 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#E8192C">
-<title>HDFC Life – Intelli-UW Proposal</title>
+<meta name="theme-color" content="#1B4F8A">
+<title>ABC Life Insurance – Smart UW Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════════════════════════════════
+   ABC LIFE – DESIGN TOKENS
+═══════════════════════════════════════════ */
 :root {
+  --navy: #1B4F8A;
+  --navy-dark: #133A6B;
   --red: #E8192C; --red-dark: #C4151F; --red-light: #FEE8EA;
   --blue: #005DAA; --blue-dark: #004A87; --blue-light: #E6EFF9;
-  --white: #FFFFFF; --ink: #1C1C2E; --paper: #F5F7FA;
-  --soft: #EEF1F7; --border: #DDE2EE; --muted: #6B7280;
-  --success: #0A7A55; --success-light: #E6F5F0;
-  --shadow: 0 2px 16px rgba(28,28,46,0.08);
-  --shadow-lg: 0 12px 40px rgba(28,28,46,0.14);
-  --r: 14px; --r-sm: 9px; --header-h: 60px;
+  --navy-light: #E8F0FA;
+  --teal: #0D7A6B;
+  --teal-light: #E0F5F1;
+  --red: #C8102E;
+  --red-light: #FDEAED;
+  --amber: #D97706;
+  --amber-light: #FEF3C7;
+  --ink: #0F172A;
+  --paper: #F0F4FA;
+  --soft: #EEF2F9;
+  --border: #D4DCF0;
+  --muted: #64748B;
+  --white: #FFFFFF;
+  --shadow: 0 2px 20px rgba(27,79,138,0.10);
+  --shadow-lg: 0 8px 48px rgba(27,79,138,0.18);
+  --r: 16px;
+  --r-sm: 10px;
+  --header-h: 64px;
+  /* Status colors */
+  --green: #059669;
+  --green-light: #D1FAE5;
+  --amber-status: #D97706;
+  --gray-status: #94A3B8;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family:'Plus Jakarta Sans', -apple-system, sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
 }
 
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-body { font-family: 'Inter', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
+/* ═══ API KEY GATE ═══ */
+.key-gate {
+  position:fixed; inset:0;
+  background:linear-gradient(135deg, var(--navy-dark) 0%, #0A2444 60%, #1a0a2e 100%);
+  z-index:99999;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:2rem;
+}
+.key-gate.hidden { display:none; }
+.key-gate-box {
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:20px; padding:2.5rem;
+  max-width:460px; width:100%;
+  text-align:center;
+  backdrop-filter:blur(20px);
+}
+.key-gate-logo {
+  width:70px; height:70px; border-radius:18px;
+  background:linear-gradient(135deg,var(--red),#B8960A);
+  margin:0 auto 1.2rem;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem;
+  box-shadow:0 0 30px rgba(212,175,55,0.4);
+}
+.key-gate h2 { font-family:'Sora',sans-serif; font-size:1.4rem; font-weight:800; color:white; margin-bottom:0.4rem; }
+.key-gate p { font-size:0.85rem; color:rgba(255,255,255,0.55); margin-bottom:1.75rem; line-height:1.6; }
+.key-input-wrap { position:relative; margin-bottom:1rem; }
+.key-input-wrap input {
+  width:100%; padding:14px 50px 14px 16px;
+  border:1.5px solid rgba(255,255,255,0.2);
+  border-radius:var(--r-sm);
+  background:rgba(255,255,255,0.08);
+  color:white; font-size:0.95rem; font-family:inherit;
+  outline:none; letter-spacing:0.5px;
+  transition:border 0.2s;
+}
+.key-input-wrap input::placeholder { color:rgba(255,255,255,0.3); }
+.key-input-wrap input:focus { border-color:var(--red); }
+.key-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; color:rgba(255,255,255,0.5); cursor:pointer; font-size:1rem; }
+.key-submit {
+  width:100%; padding:13px; border:none; border-radius:var(--r-sm);
+  background:linear-gradient(135deg,var(--red),#B8960A);
+  color:var(--ink); font-family:'Sora',sans-serif; font-weight:700;
+  font-size:0.95rem; cursor:pointer; transition:all 0.2s;
+  box-shadow:0 4px 20px rgba(212,175,55,0.4);
+}
+.key-submit:hover { transform:translateY(-1px); box-shadow:0 6px 28px rgba(212,175,55,0.5); }
+.key-note { font-size:0.7rem; color:rgba(255,255,255,0.3); margin-top:0.9rem; }
+.key-models {
+  display:flex; flex-wrap:wrap; gap:6px; justify-content:center;
+  margin-bottom:1.25rem;
+}
+.key-model-tag {
+  padding:3px 10px; border-radius:20px;
+  background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15);
+  font-size:0.68rem; color:rgba(255,255,255,0.55);
+}
 
-/* ── HEADER ── */
-.hdr { background: var(--blue); height: var(--header-h); display: flex; align-items: center; padding: 0 1.5rem; border-bottom: 3px solid var(--red); position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-.hl-main { font-family: 'Sora', sans-serif; color: white; font-weight: 800; font-size: 1.25rem; }
-.hl-main span { color: #FFD0D4; }
+/* ═══ HEADER ═══ */
+.hdr {
+  background:var(--navy);
+  height:var(--header-h);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 1.5rem;
+  position:sticky; top:0; z-index:200;
+  border-bottom:3px solid var(--red);
+  box-shadow:0 2px 16px rgba(27,79,138,0.3);
+}
+.hdr-brand { display:flex; align-items:center; gap:10px; }
+.hdr-logo-box {
+  width:38px; height:38px; border-radius:10px;
+  background:linear-gradient(135deg,var(--red),#B8960A);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.2rem; font-weight:800; color:var(--ink);
+  font-family:'Sora',sans-serif;
+  box-shadow:0 2px 8px rgba(212,175,55,0.4);
+}
+.hdr-text .hl-main { font-family:'Sora',sans-serif; font-size:1.1rem; font-weight:800; color:white; letter-spacing:-0.3px; }
+.hdr-text .hl-main span { color:var(--red); }
+.hdr-text .hl-sub { font-size:0.58rem; color:rgba(255,255,255,0.45); letter-spacing:1.5px; text-transform:uppercase; margin-top:1px; }
+.hdr-right { display:flex; align-items:center; gap:8px; }
+.hdr-badge { display:flex; align-items:center; gap:5px; padding:4px 10px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:20px; font-size:0.7rem; color:rgba(255,255,255,0.7); }
+.hdr-aria-btn {
+  display:flex; align-items:center; gap:6px;
+  padding:6px 12px; background:rgba(212,175,55,0.15);
+  border:1px solid rgba(212,175,55,0.4);
+  border-radius:20px; cursor:pointer; font-size:0.72rem;
+  color:var(--red); font-weight:600; transition:all 0.2s;
+}
+.hdr-aria-btn:hover { background:rgba(212,175,55,0.25); }
 
-/* ── AVATAR ── */
-.ai-avatar { width: 150px; height: 150px; border-radius: 50%; border: 5px solid var(--red); overflow: hidden; background: white; box-shadow: var(--shadow-lg); transition: transform 0.3s; }
-.ai-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.assist-mini-av { width: 45px; height: 45px; border-radius: 50%; overflow: hidden; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-.assist-mini-av img { width: 100%; height: 100%; object-fit: cover; }
+/* ═══ DASHBOARD LAYOUT ═══ */
+.dashboard { display:flex; max-width:1200px; margin:0 auto; gap:0; }
+.sidebar {
+  width:280px; flex-shrink:0;
+  padding:1.25rem 1rem;
+  position:sticky; top:var(--header-h);
+  height:calc(100vh - var(--header-h));
+  overflow-y:auto; overflow-x:hidden;
+  background:white; border-right:1px solid var(--border);
+}
+.sidebar::-webkit-scrollbar { width:4px; }
+.sidebar::-webkit-scrollbar-track { background:transparent; }
+.sidebar::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
 
-/* ── OVERLAY ── */
-.ai-welcome-overlay { position: fixed; inset: 0; z-index: 10000; background: linear-gradient(135deg, #001A33 0%, #004A87 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.ai-welcome-overlay.hidden { display: none; }
+.sidebar-title { font-size:0.68rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:0.75rem; padding:0 0.5rem; }
 
-/* ── PROGRESS & FORM ── */
-.main-content { max-width: 800px; margin: 2rem auto; padding: 0 1.25rem; }
-.card { background: white; border-radius: var(--r); padding: 2rem; margin-bottom: 1.5rem; box-shadow: var(--shadow); border: 1px solid var(--border); animation: fadeIn 0.5s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.nav-section {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px; border-radius:10px; cursor:pointer;
+  transition:all 0.2s; margin-bottom:4px;
+  border:1.5px solid transparent;
+  position:relative;
+}
+.nav-section:hover { background:var(--navy-light); }
+.nav-section.active { background:var(--navy-light); border-color:var(--navy); }
+.nav-section.completed { border-color:var(--green); background:var(--green-light); }
+.nav-section.partial { border-color:var(--amber); background:var(--amber-light); }
 
-.fg { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.fld { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1.2rem; }
-label { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
-input, select, textarea { padding: 12px; border: 1.5px solid var(--border); border-radius: var(--r-sm); background: var(--soft); font-size: 1rem; outline: none; transition: 0.2s; }
-input:focus { border-color: var(--red); background: white; }
+.nav-section-icon { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; background:var(--soft); }
+.nav-section.active .nav-section-icon { background:var(--navy); }
+.nav-section.completed .nav-section-icon { background:var(--green); }
+.nav-section.partial .nav-section-icon { background:var(--amber); }
 
-/* ── ASSISTANT PANEL ── */
-.assist-panel { position: fixed; bottom: 25px; right: 25px; width: 340px; background: white; border-radius: 20px; box-shadow: var(--shadow-lg); display: none; border: 1px solid var(--border); z-index: 1000; overflow: hidden; flex-direction: column; }
-.assist-panel.open { display: flex; }
-.assist-hdr { background: var(--blue); color: white; padding: 15px; display: flex; align-items: center; gap: 12px; }
-.assist-body { padding: 20px; font-size: 0.95rem; line-height: 1.6; color: var(--ink); min-height: 100px; }
-.assist-footer { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
-.assist-input { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 10px; font-size: 0.9rem; }
+.nav-section-text { flex:1; }
+.nav-section-name { font-size:0.82rem; font-weight:600; color:var(--ink); line-height:1.2; }
+.nav-section.active .nav-section-name { color:var(--navy); }
+.nav-section-sub { font-size:0.68rem; color:var(--muted); margin-top:1px; }
+
+.nav-status { width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; }
+.nav-status.done { background:var(--green); color:white; }
+.nav-status.partial-st { background:var(--amber); color:white; }
+.nav-status.empty { background:var(--border); }
+
+/* Divider in sidebar */
+.sidebar-divider { height:1px; background:var(--border); margin:1rem 0; }
+.sidebar-overall {
+  background:var(--navy-light); border-radius:10px; padding:0.9rem; margin-bottom:0.75rem;
+}
+.sidebar-overall-pct { font-family:'Sora',sans-serif; font-size:1.6rem; font-weight:800; color:var(--navy); }
+.sidebar-overall-lbl { font-size:0.7rem; color:var(--muted); }
+.sidebar-bar { height:5px; background:var(--border); border-radius:5px; margin-top:6px; overflow:hidden; }
+.sidebar-bar-fill { height:100%; background:linear-gradient(90deg,var(--teal),var(--navy)); border-radius:5px; transition:width 0.5s; }
+
+/* Requirements doc section */
+.req-section-btn {
+  display:flex; align-items:center; gap:8px;
+  padding:10px 12px; border-radius:10px; cursor:pointer;
+  background:linear-gradient(135deg,var(--red-light),#FFF8E7);
+  border:1.5px solid rgba(212,175,55,0.4);
+  margin-bottom:4px; transition:all 0.2s;
+}
+.req-section-btn:hover { border-color:var(--red); }
+.req-section-btn.active { border-color:var(--red); background:var(--red-light); }
+.req-section-btn-icon { width:34px; height:34px; border-radius:8px; background:var(--red); display:flex; align-items:center; justify-content:center; font-size:16px; }
+.req-section-btn-text .rsb-name { font-size:0.82rem; font-weight:700; color:var(--navy); }
+.req-section-btn-text .rsb-sub { font-size:0.67rem; color:var(--muted); }
+
+/* ═══ MAIN CONTENT ═══ */
+.content { flex:1; padding:1.5rem; min-width:0; }
+
+.section-panel { display:none; }
+.section-panel.active { display:block; animation:slideIn 0.3s ease; }
+@keyframes slideIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* ═══ SECTION HEADER ═══ */
+.sec-header {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-bottom:1.25rem; flex-wrap:wrap; gap:0.75rem;
+}
+.sec-header-left { display:flex; align-items:flex-start; gap:0.85rem; }
+.sec-header-icon { width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.ic-navy { background:var(--navy-light); }
+.ic-teal { background:var(--teal-light); }
+.ic-red { background:var(--red-light); }
+.ic-red { background:var(--red-light); }
+.ic-amber { background:var(--amber-light); }
+.sec-ttl { font-family:'Sora',sans-serif; font-weight:700; font-size:1.15rem; color:var(--ink); line-height:1.2; }
+.sec-sub { font-size:0.8rem; color:var(--muted); margin-top:3px; line-height:1.5; }
+
+.sec-status-badge {
+  display:flex; align-items:center; gap:6px;
+  padding:5px 12px; border-radius:20px; font-size:0.74rem; font-weight:700;
+  white-space:nowrap;
+}
+.badge-complete { background:var(--green-light); color:var(--green); border:1.5px solid var(--green); }
+.badge-partial { background:var(--amber-light); color:var(--amber-status); border:1.5px solid var(--amber-status); }
+.badge-empty { background:var(--soft); color:var(--muted); border:1.5px solid var(--border); }
+
+/* ═══ CARD ═══ */
+.card {
+  background:white; border-radius:var(--r);
+  padding:1.5rem; margin-bottom:1.1rem;
+  box-shadow:var(--shadow); border:1px solid var(--border);
+}
+
+/* ═══ FORM ELEMENTS ═══ */
+.fg { display:grid; grid-template-columns:1fr 1fr; gap:0.9rem; }
+.fg.g1 { grid-template-columns:1fr; }
+.fg.g3 { grid-template-columns:1fr 1fr 1fr; }
+.fld { display:flex; flex-direction:column; gap:5px; }
+.fld.full { grid-column:1/-1; }
+.fld > label { font-size:0.75rem; font-weight:600; color:#374151; display:flex; align-items:center; gap:4px; }
+.req { color:var(--red); }
+.opt { background:var(--soft); border-radius:20px; padding:1px 7px; font-size:0.66rem; color:var(--muted); font-weight:400; margin-left:auto; }
+.fld-help { font-size:0.7rem; color:var(--muted); }
+.fld-match { font-size:0.7rem; font-weight:600; margin-top:2px; }
+.fld-match.ok { color:var(--green); }
+.fld-match.partial { color:var(--amber-status); }
+
+input[type=text],input[type=email],input[type=tel],
+input[type=number],input[type=date],select,textarea {
+  width:100%; padding:11px 13px;
+  border:1.5px solid var(--border); border-radius:var(--r-sm);
+  font-family:inherit; font-size:0.9rem;
+  color:var(--ink); background:var(--soft);
+  transition:border 0.2s, box-shadow 0.2s;
+  outline:none; appearance:none; -webkit-appearance:none;
+}
+input:focus,select:focus,textarea:focus { border-color:var(--navy); background:white; box-shadow:0 0 0 3px rgba(27,79,138,0.1); }
+input[readonly] { background:var(--soft); color:var(--muted); cursor:default; }
+input.autofilled { border-color:var(--teal); background:var(--teal-light); }
+input.matched { border-color:var(--green); }
+input.partial-match { border-color:var(--amber); }
+select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1 1l5 4.5L11 1' stroke='%2364748B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; padding-right:34px; cursor:pointer; }
+textarea { resize:vertical; min-height:80px; }
+.divider { height:1px; background:var(--border); margin:1.2rem 0; }
+.sub { background:var(--soft); border-radius:10px; padding:1.1rem; margin:0.9rem 0; border:1px solid var(--border); }
+.sub-ttl { font-size:0.72rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.7px; margin-bottom:0.9rem; }
+
+/* ═══ INPUT WITH UNIT ═══ */
+.inp-unit { display:flex; border:1.5px solid var(--border); border-radius:var(--r-sm); overflow:hidden; background:var(--soft); transition:border 0.2s, box-shadow 0.2s; }
+.inp-unit:focus-within { border-color:var(--navy); background:white; box-shadow:0 0 0 3px rgba(27,79,138,0.1); }
+.inp-unit input { border:none!important; background:transparent!important; box-shadow:none!important; flex:1; }
+.unit-tag { display:flex; align-items:center; padding:0 10px; background:var(--border); font-size:0.72rem; color:var(--muted); border-left:1.5px solid var(--border); font-weight:600; flex-shrink:0; }
+
+/* ═══ NUDGE ═══ */
+.nudge { display:flex; align-items:flex-start; gap:9px; padding:10px 14px; border-radius:var(--r-sm); margin:0.9rem 0; font-size:0.79rem; line-height:1.55; }
+.nudge.info { background:var(--navy-light); border-left:3px solid var(--navy); color:#1B3A6B; }
+.nudge.warn { background:var(--red-light); border-left:3px solid var(--red); color:#7A0010; }
+.nudge.tip { background:var(--amber-light); border-left:3px solid var(--amber); color:#6B4200; }
+.nudge.good { background:var(--teal-light); border-left:3px solid var(--teal); color:#054D35; }
+.nudge.red { background:var(--red-light); border-left:3px solid var(--red); color:#6B4A00; }
+.nudge-ico { font-size:15px; flex-shrink:0; margin-top:1px; }
+
+/* ═══ PILLS ═══ */
+.pill-grp { display:flex; flex-wrap:wrap; gap:7px; margin-top:3px; }
+.pill { display:flex; align-items:center; gap:5px; padding:8px 14px; border:1.5px solid var(--border); border-radius:25px; cursor:pointer; font-size:0.8rem; transition:all 0.2s; user-select:none; background:white; font-weight:500; min-height:40px; }
+.pill:hover { border-color:var(--navy); background:var(--navy-light); }
+.pill.sel { border-color:var(--navy); background:var(--navy-light); color:var(--navy); font-weight:700; }
+.pill input { display:none; }
+
+/* ═══ COND PILLS ═══ */
+.cond-grid { display:flex; flex-wrap:wrap; gap:7px; margin:0.5rem 0; }
+.cond-pill { display:flex; align-items:center; gap:5px; padding:7px 12px; border:1.5px solid var(--border); border-radius:8px; cursor:pointer; font-size:0.78rem; transition:all 0.2s; background:white; user-select:none; min-height:36px; font-weight:500; }
+.cond-pill:hover { border-color:var(--navy); background:var(--navy-light); }
+.cond-pill.sel { border-color:var(--navy); background:var(--navy-light); color:var(--navy); font-weight:700; }
+.cond-pill input { display:none; }
+
+/* ═══ TOGGLE ═══ */
+.tog-wrap { display:flex; align-items:center; gap:12px; padding:10px 0; }
+.tog { position:relative; width:44px; height:25px; flex-shrink:0; }
+.tog input { display:none; }
+.tog-sl { position:absolute; inset:0; background:var(--border); border-radius:25px; cursor:pointer; transition:0.3s; }
+.tog-sl::before { content:''; position:absolute; width:19px; height:19px; left:3px; top:3px; background:white; border-radius:50%; transition:0.3s; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+.tog input:checked + .tog-sl { background:var(--teal); }
+.tog input:checked + .tog-sl::before { transform:translateX(19px); }
+.tog-lbl { font-size:0.87rem; color:#374151; font-weight:600; }
+.tog-desc { font-size:0.73rem; color:var(--muted); margin-top:1px; }
+
+/* ═══ BUTTONS ═══ */
+.btn-row { display:flex; gap:10px; margin-top:1.5rem; align-items:center; flex-wrap:wrap; }
+.btn-primary { padding:11px 24px; border:none; border-radius:var(--r-sm); background:var(--navy); color:white; font-family:'Sora',sans-serif; font-weight:700; font-size:0.87rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:7px; min-height:44px; }
+.btn-primary:hover { background:var(--navy-dark); transform:translateY(-1px); box-shadow:0 4px 14px rgba(27,79,138,0.35); }
+.btn-secondary { padding:11px 20px; border:1.5px solid var(--border); border-radius:var(--r-sm); background:white; font-family:inherit; font-size:0.87rem; cursor:pointer; color:var(--muted); transition:all 0.2s; display:flex; align-items:center; gap:5px; min-height:44px; }
+.btn-secondary:hover { border-color:var(--navy); color:var(--navy); }
+.btn-red { padding:11px 24px; border:none; border-radius:var(--r-sm); background:linear-gradient(135deg,var(--red),#B8960A); color:var(--ink); font-family:'Sora',sans-serif; font-weight:700; font-size:0.87rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:7px; min-height:44px; box-shadow:0 4px 16px rgba(212,175,55,0.35); }
+.btn-red:hover { transform:translateY(-1px); box-shadow:0 6px 22px rgba(212,175,55,0.5); }
+.btn-teal { padding:11px 24px; border:none; border-radius:var(--r-sm); background:var(--teal); color:white; font-family:'Sora',sans-serif; font-weight:700; font-size:0.87rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:7px; min-height:44px; }
+.btn-add { padding:8px 14px; border:1.5px dashed var(--navy); border-radius:var(--r-sm); background:var(--navy-light); color:var(--navy); font-size:0.78rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px; transition:all 0.2s; }
+.btn-rm { width:34px; height:34px; border:1.5px solid #FFCCCC; background:#FFF5F5; border-radius:7px; color:#CC3333; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; }
+
+/* ═══ AML ═══ */
+.aml-q { display:flex; align-items:flex-start; gap:11px; padding:13px; border:1.5px solid var(--border); border-radius:var(--r-sm); margin-bottom:7px; background:white; transition:all 0.2s; }
+.aml-q.flagged { border-color:var(--red); background:var(--red-light); }
+.aml-qt { flex:1; }
+.aml-qt strong { display:block; font-size:0.84rem; color:var(--ink); margin-bottom:3px; }
+.aml-qt span { font-size:0.75rem; color:var(--muted); line-height:1.5; }
+.aml-btns { display:flex; gap:5px; flex-shrink:0; }
+.aml-btn { padding:5px 13px; border-radius:20px; border:1.5px solid var(--border); background:white; font-size:0.76rem; cursor:pointer; transition:all 0.2s; font-weight:500; }
+.aml-btn.yes-sel { border-color:var(--red); background:var(--red-light); color:var(--red); font-weight:700; }
+.aml-btn.no-sel { border-color:var(--teal); background:var(--teal-light); color:var(--teal); font-weight:700; }
+
+/* ═══ OWNER CARD ═══ */
+.owner-card { border:1.5px solid var(--border); border-radius:var(--r-sm); padding:0.9rem 1.1rem; cursor:pointer; transition:all 0.2s; display:flex; align-items:flex-start; gap:10px; background:white; margin-bottom:7px; }
+.owner-card.sel { border-color:var(--navy); background:var(--navy-light); }
+.owner-card input { accent-color:var(--navy); margin-top:3px; flex-shrink:0; }
+
+/* ═══ NOMINEE ROW ═══ */
+.nom-row { display:grid; grid-template-columns:1fr 1fr 80px 36px; gap:7px; align-items:end; margin-bottom:7px; }
+
+/* ═══ BMI ═══ */
+.bmi-box { background:var(--navy); color:white; border-radius:12px; padding:0.9rem 1.1rem; display:flex; align-items:center; justify-content:space-between; margin-top:0.5rem; }
+.bmi-num { font-family:'Sora',sans-serif; font-size:1.9rem; font-weight:800; }
+.bmi-lbl { font-size:0.7rem; color:rgba(255,255,255,0.55); }
+.bmi-cat { padding:3px 12px; border-radius:20px; font-size:0.76rem; font-weight:700; }
+.cat-ok { background:rgba(5,150,105,0.25); color:#7FFFD4; }
+.cat-over { background:rgba(217,119,6,0.25); color:#FCD34D; }
+.cat-under { background:rgba(200,16,46,0.2); color:#FCA5A5; }
+.cat-obese { background:rgba(180,0,0,0.3); color:#FFAAAA; }
+
+/* ═══ DECL BOX ═══ */
+.decl-box { background:var(--navy); color:white; border-radius:14px; padding:1.4rem; margin-top:0.9rem; }
+.decl-box h4 { font-family:'Sora',sans-serif; font-weight:700; font-size:0.95rem; margin-bottom:0.7rem; color:var(--red); }
+.decl-box p { font-size:0.78rem; line-height:1.7; color:rgba(255,255,255,0.72); margin-bottom:0.9rem; }
+.decl-chk { display:flex; align-items:flex-start; gap:9px; padding:9px 0; border-top:1px solid rgba(255,255,255,0.1); font-size:0.79rem; color:rgba(255,255,255,0.85); cursor:pointer; }
+.decl-chk input { accent-color:var(--red); width:15px; height:15px; flex-shrink:0; margin-top:2px; }
+
+/* ═══ SCORE BARS ═══ */
+.score-bar { display:flex; align-items:center; gap:9px; margin:0.65rem 0; }
+.score-track { flex:1; height:6px; background:var(--border); border-radius:4px; overflow:hidden; }
+.score-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--teal),var(--navy)); transition:width 0.6s; }
+.score-pct { font-family:'Sora',sans-serif; font-weight:700; font-size:0.8rem; color:var(--navy); min-width:34px; text-align:right; }
+
+/* ═══ HIDDEN ═══ */
+.hidden { display:none!important; }
+
+/* ═══ REQUIREMENTS PANEL ═══ */
+.req-panel { }
+.req-category { margin-bottom:1.25rem; }
+.req-cat-title { font-family:'Sora',sans-serif; font-size:0.88rem; font-weight:700; color:var(--ink); margin-bottom:0.75rem; display:flex; align-items:center; gap:7px; }
+.req-item {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; border-radius:10px; margin-bottom:7px;
+  border:1.5px solid var(--border); background:white;
+  transition:all 0.2s; cursor:pointer; position:relative;
+}
+.req-item:hover { border-color:var(--navy); box-shadow:0 2px 8px rgba(27,79,138,0.1); }
+.req-item.req-green { border-color:var(--green); background:var(--green-light); }
+.req-item.req-amber { border-color:var(--amber); background:var(--amber-light); }
+.req-item.req-gray { border-color:var(--border); background:var(--soft); opacity:0.7; }
+
+.req-icon { width:40px; height:40px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; background:var(--soft); }
+.req-item.req-green .req-icon { background:var(--green); }
+.req-item.req-amber .req-icon { background:var(--amber); }
+
+.req-text { flex:1; }
+.req-name { font-size:0.84rem; font-weight:600; color:var(--ink); }
+.req-desc { font-size:0.71rem; color:var(--muted); margin-top:2px; line-height:1.4; }
+.req-status { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+.req-status-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.dot-green { background:var(--green); }
+.dot-amber { background:var(--amber); }
+.dot-gray { background:var(--gray-status); }
+.req-status-txt { font-size:0.7rem; font-weight:700; }
+.txt-green { color:var(--green); }
+.txt-amber { color:var(--amber); }
+.txt-gray { color:var(--gray-status); }
+
+.req-upload-zone {
+  border:2px dashed var(--border); border-radius:10px;
+  padding:1.25rem; text-align:center;
+  cursor:pointer; transition:all 0.2s;
+  background:var(--soft);
+}
+.req-upload-zone:hover { border-color:var(--navy); background:var(--navy-light); }
+.req-upload-zone.drag-over { border-color:var(--red); background:var(--red-light); }
+.req-upload-zone p { font-size:0.8rem; color:var(--muted); margin-top:5px; }
+.req-upload-zone .upload-icon { font-size:2rem; }
+.req-upload-zone input[type=file] { display:none; }
+
+/* OCR processing indicator */
+.ocr-processing {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 12px; background:var(--amber-light);
+  border-radius:8px; font-size:0.78rem; color:var(--amber);
+  font-weight:600; margin-top:8px;
+}
+.ocr-spinner { width:16px; height:16px; border:2px solid var(--amber-light); border-top-color:var(--amber); border-radius:50%; animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.ocr-result {
+  margin-top:8px; padding:10px 12px; border-radius:8px;
+  border:1.5px solid; font-size:0.78rem; line-height:1.5;
+}
+.ocr-result.success { border-color:var(--green); background:var(--green-light); color:var(--teal); }
+.ocr-result.partial { border-color:var(--amber); background:var(--amber-light); color:var(--amber); }
+.ocr-result.error { border-color:var(--border); background:var(--soft); color:var(--muted); }
+
+/* ═══ PHONE LOOKUP ═══ */
+.phone-lookup-box {
+  background:linear-gradient(135deg,var(--navy) 0%,#1A2A6C 100%);
+  border-radius:var(--r); padding:1.5rem; margin-bottom:1.1rem;
+  color:white; position:relative; overflow:hidden;
+}
+.phone-lookup-box::before { content:''; position:absolute; width:200px; height:200px; background:radial-gradient(circle,rgba(212,175,55,0.2) 0%,transparent 70%); top:-60px; right:-40px; pointer-events:none; }
+.phone-lookup-title { font-family:'Sora',sans-serif; font-size:1rem; font-weight:700; margin-bottom:0.4rem; }
+.phone-lookup-sub { font-size:0.8rem; color:rgba(255,255,255,0.6); margin-bottom:1.1rem; line-height:1.5; }
+.phone-lookup-row { display:flex; gap:8px; }
+.phone-lookup-row input { flex:1; padding:12px 14px; border:1.5px solid rgba(255,255,255,0.2); border-radius:var(--r-sm); background:rgba(255,255,255,0.1); color:white; font-size:0.95rem; font-family:inherit; outline:none; }
+.phone-lookup-row input::placeholder { color:rgba(255,255,255,0.35); }
+.phone-lookup-row input:focus { border-color:var(--red); }
+.phone-lookup-btn { padding:12px 18px; border:none; border-radius:var(--r-sm); background:var(--red); color:var(--ink); font-family:'Sora',sans-serif; font-weight:700; font-size:0.85rem; cursor:pointer; white-space:nowrap; transition:all 0.2s; }
+.phone-lookup-btn:hover { background:#B8960A; }
+
+.lookup-methods { display:flex; gap:7px; flex-wrap:wrap; margin-top:0.75rem; }
+.lookup-method-btn { display:flex; align-items:center; gap:5px; padding:6px 12px; border:1px solid rgba(255,255,255,0.2); border-radius:20px; background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.7); font-size:0.72rem; cursor:pointer; transition:all 0.2s; }
+.lookup-method-btn:hover { background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.35); }
+.lookup-method-btn.active-method { border-color:var(--red); color:var(--red); background:rgba(212,175,55,0.1); }
+
+/* ═══ ARIA PANEL ═══ */
+.aria-overlay {
+  position:fixed; inset:0;
+  background:rgba(15,23,42,0.6); backdrop-filter:blur(8px);
+  z-index:8000; display:flex; align-items:flex-end;
+  justify-content:flex-end; padding:80px 20px 20px;
+}
+.aria-panel {
+  background:white; border-radius:20px;
+  width:380px; max-width:95vw;
+  box-shadow:var(--shadow-lg);
+  border:1px solid var(--border);
+  overflow:hidden; display:flex; flex-direction:column;
+  max-height:calc(100vh - 100px);
+}
+.aria-panel-hdr {
+  background:var(--navy); padding:1rem 1.1rem;
+  display:flex; align-items:center; gap:10px; flex-shrink:0;
+}
+.aria-avatar-wrap { position:relative; }
+.aria-avatar {
+  width:46px; height:46px; border-radius:50%;
+  background:linear-gradient(135deg,var(--red-light),#FFF0A0);
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden; flex-shrink:0;
+  border:2px solid var(--red);
+}
+.aria-avatar svg { width:100%; height:100%; }
+.aria-speaking-ring {
+  position:absolute; inset:-3px; border-radius:50%;
+  border:2px solid var(--red); opacity:0;
+  animation:none;
+}
+.aria-speaking .aria-speaking-ring { opacity:1; animation:ringPulse 1s ease infinite; }
+@keyframes ringPulse { 0%,100%{transform:scale(1);opacity:0.8} 50%{transform:scale(1.12);opacity:0.3} }
+.aria-hdr-info { flex:1; }
+.aria-hdr-name { font-family:'Sora',sans-serif; font-weight:700; font-size:0.9rem; color:white; }
+.aria-hdr-status { font-size:0.67rem; color:rgba(255,255,255,0.55); }
+.aria-close { background:none; border:none; color:rgba(255,255,255,0.5); font-size:1.1rem; cursor:pointer; }
+
+/* Aria wave anim */
+.waves { display:flex; align-items:center; gap:2px; height:16px; }
+.waves .w { width:3px; border-radius:3px; background:var(--red); animation:waveBounce 0.5s ease infinite; }
+.waves .w:nth-child(1){height:5px;animation-delay:0s;}
+.waves .w:nth-child(2){height:10px;animation-delay:0.1s;}
+.waves .w:nth-child(3){height:14px;animation-delay:0.2s;}
+.waves .w:nth-child(4){height:10px;animation-delay:0.3s;}
+.waves .w:nth-child(5){height:5px;animation-delay:0.4s;}
+.waves.paused .w { animation-play-state:paused; opacity:0.3; }
+@keyframes waveBounce { 0%,100%{transform:scaleY(0.4)} 50%{transform:scaleY(1)} }
+
+.aria-chat { flex:1; overflow-y:auto; padding:1rem; display:flex; flex-direction:column; gap:0.75rem; }
+.aria-bubble { border-radius:14px; padding:0.8rem 1rem; max-width:90%; font-size:0.82rem; line-height:1.6; }
+.aria-bubble.aria-msg { background:var(--navy-light); border:1px solid var(--border); border-bottom-left-radius:4px; align-self:flex-start; color:var(--ink); }
+.aria-bubble.user-msg { background:var(--navy); color:white; border-bottom-right-radius:4px; align-self:flex-end; }
+.aria-typing { display:flex; align-items:center; gap:4px; padding:0.6rem 0.8rem; background:var(--soft); border-radius:10px; align-self:flex-start; }
+.aria-typing span { width:6px; height:6px; border-radius:50%; background:var(--muted); animation:typingBounce 1s ease infinite; }
+.aria-typing span:nth-child(2){animation-delay:0.15s;}
+.aria-typing span:nth-child(3){animation-delay:0.3s;}
+@keyframes typingBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+.aria-input-row { display:flex; gap:7px; padding:0.75rem; border-top:1px solid var(--border); flex-shrink:0; }
+.aria-input { flex:1; padding:9px 13px; border:1.5px solid var(--border); border-radius:25px; font-family:inherit; font-size:0.82rem; outline:none; transition:border 0.2s; }
+.aria-input:focus { border-color:var(--navy); }
+.aria-send { width:36px; height:36px; border-radius:50%; background:var(--navy); border:none; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+.aria-voice-btn { width:36px; height:36px; border-radius:50%; background:var(--soft); border:1.5px solid var(--border); color:var(--muted); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; transition:all 0.2s; }
+.aria-voice-btn.listening { background:var(--red-light); border-color:var(--red); color:var(--red); animation:pulse 1s ease infinite; }
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+.aria-quick-actions { display:flex; flex-wrap:wrap; gap:5px; padding:0 0.75rem 0.5rem; }
+.aria-qa { padding:5px 10px; border:1.5px solid var(--border); border-radius:20px; font-size:0.72rem; color:var(--navy); cursor:pointer; background:white; transition:all 0.2s; font-weight:600; }
+.aria-qa:hover { background:var(--navy-light); border-color:var(--navy); }
+
+/* Float button */
+.float-aria { position:fixed; bottom:24px; right:24px; z-index:7000; }
+.float-aria-btn {
+  width:60px; height:60px; border-radius:50%;
+  background:linear-gradient(135deg,var(--navy),var(--navy-dark));
+  border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 20px rgba(27,79,138,0.45);
+  transition:all 0.25s; overflow:hidden;
+}
+.float-aria-btn:hover { transform:scale(1.08); }
+.float-aria-btn svg { width:34px; height:34px; }
+.float-dot { position:absolute; top:-2px; right:-2px; width:14px; height:14px; border-radius:50%; background:var(--green); border:2px solid white; animation:blinkGreen 2s ease infinite; }
+@keyframes blinkGreen{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ═══ WELCOME / SPLASH ═══ */
+.splash-overlay {
+  position:fixed; inset:0;
+  background:linear-gradient(135deg, #0A1628 0%, #1B4F8A 50%, #0D2A5E 100%);
+  z-index:9000; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; padding:2rem;
+}
+.splash-overlay.hidden { display:none; }
+.splash-logo { display:flex; align-items:center; gap:14px; margin-bottom:1.5rem; }
+.splash-logo-box { width:64px; height:64px; border-radius:16px; background:linear-gradient(135deg,var(--red),#B8960A); display:flex; align-items:center; justify-content:center; font-size:1.7rem; font-family:'Sora',sans-serif; font-weight:800; color:var(--ink); box-shadow:0 0 30px rgba(212,175,55,0.5); }
+.splash-brand-name { font-family:'Sora',sans-serif; font-size:1.5rem; font-weight:800; color:white; }
+.splash-brand-name span { color:var(--red); }
+.splash-brand-sub { font-size:0.72rem; color:rgba(255,255,255,0.45); letter-spacing:2px; text-transform:uppercase; }
+
+.splash-aria-avatar {
+  width:130px; height:130px; border-radius:50%;
+  margin:0 auto 1.25rem; position:relative;
+  background:linear-gradient(135deg,#FDE8D8,#F4C7A0);
+  border:3px solid var(--red);
+  box-shadow:0 0 40px rgba(212,175,55,0.3), 0 0 80px rgba(212,175,55,0.1);
+  overflow:hidden;
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.splash-aria-avatar svg { width:100%; height:100%; }
+.splash-ring { position:absolute; border-radius:50%; border:2px solid rgba(212,175,55,0.3); animation:splashRing 2s ease infinite; }
+.splash-ring:nth-child(1){width:150px;height:150px;top:-10px;left:-10px;animation-delay:0s;}
+.splash-ring:nth-child(2){width:175px;height:175px;top:-22.5px;left:-22.5px;animation-delay:0.5s;}
+.splash-ring:nth-child(3){width:200px;height:200px;top:-35px;left:-35px;animation-delay:1s;}
+@keyframes splashRing{0%,100%{opacity:0.5;transform:scale(0.95)}50%{opacity:0.2;transform:scale(1)}}
+
+.splash-name { font-family:'Sora',sans-serif; font-size:1.1rem; font-weight:800; color:white; text-align:center; margin-bottom:3px; }
+.splash-name span { color:var(--red); }
+.splash-role { font-size:0.75rem; color:rgba(255,255,255,0.45); text-align:center; letter-spacing:0.5px; margin-bottom:1rem; }
+.splash-bubble {
+  background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15);
+  border-radius:16px; padding:1rem 1.25rem;
+  max-width:380px; text-align:center;
+  font-size:0.9rem; color:rgba(255,255,255,0.88); line-height:1.65;
+  margin-bottom:1.25rem; position:relative;
+}
+.splash-bubble::before { content:''; position:absolute; top:-9px; left:50%; transform:translateX(-50%); border:9px solid transparent; border-bottom-color:rgba(255,255,255,0.15); border-top:none; }
+.splash-waves { display:flex; align-items:center; gap:3px; height:24px; justify-content:center; margin:0 auto 1.25rem; }
+.splash-btn { padding:13px 32px; border:none; border-radius:30px; font-family:'Sora',sans-serif; font-weight:700; font-size:0.9rem; cursor:pointer; transition:all 0.2s; min-height:48px; }
+.splash-btn.primary { background:var(--red); color:var(--ink); box-shadow:0 4px 20px rgba(212,175,55,0.4); margin-right:10px; }
+.splash-btn.secondary { background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.8); border:1.5px solid rgba(255,255,255,0.2); }
+.splash-credit { font-size:0.68rem; color:rgba(255,255,255,0.3); margin-top:1.25rem; }
+.splash-credit strong { color:rgba(255,255,255,0.55); }
+
+/* TOAST */
+.toast { position:fixed; top:72px; right:16px; background:var(--ink); color:white; padding:10px 16px; border-radius:10px; font-size:0.8rem; z-index:99999; display:flex; align-items:center; gap:8px; transform:translateX(120%); transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1); box-shadow:var(--shadow-lg); max-width:280px; border-left:3px solid var(--red); }
+.toast.show { transform:translateX(0); }
+
+/* JSON MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,0.75); backdrop-filter:blur(4px); z-index:9100; display:flex; align-items:center; justify-content:center; padding:1rem; }
+.modal-box { background:#0F172A; border-radius:14px; width:100%; max-width:640px; max-height:82vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.5); border:1px solid rgba(212,175,55,0.3); animation:slideIn 0.3s ease; }
+.modal-hdr { padding:0.9rem 1.1rem; background:rgba(212,175,55,0.1); border-bottom:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:space-between; }
+.modal-ttl { font-family:'Sora',sans-serif; font-weight:700; font-size:0.9rem; color:white; display:flex; align-items:center; gap:7px; }
+.modal-body { flex:1; overflow-y:auto; padding:1rem; }
+.modal-body pre { font-family:'Courier New',monospace; font-size:0.7rem; line-height:1.6; color:#A8D8B0; white-space:pre-wrap; word-break:break-all; }
+.modal-ftr { padding:0.7rem 1.1rem; border-top:1px solid rgba(255,255,255,0.08); display:flex; gap:7px; flex-wrap:wrap; }
+.mbtn { padding:8px 16px; border-radius:7px; font-family:'Sora',sans-serif; font-weight:700; font-size:0.79rem; cursor:pointer; transition:all 0.2s; border:none; display:flex; align-items:center; gap:5px; }
+.mbtn-p { background:var(--navy); color:white; }
+.mbtn-s { background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.8); border:1px solid rgba(255,255,255,0.2)!important; }
+.mbtn-x { background:transparent; color:rgba(255,255,255,0.5); font-size:1rem; margin-left:auto; }
+
+/* SUCCESS */
+.success-wrap { text-align:center; padding:2.5rem 1.5rem; }
+.success-ico { width:80px; height:80px; background:var(--teal-light); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:38px; margin:0 auto 1.2rem; border:3px solid var(--teal); }
+
+/* MOBILE */
+@media(max-width:768px) {
+  .sidebar { display:none; }
+  .dashboard { flex-direction:column; }
+  .content { padding:1rem; }
+  .fg { grid-template-columns:1fr; }
+  .fg.g3 { grid-template-columns:1fr; }
+  .fld.full { grid-column:1; }
+  .nom-row { grid-template-columns:1fr 1fr; }
+  .mobile-nav { display:flex; overflow-x:auto; gap:7px; padding:0.75rem 1rem; background:white; border-bottom:1px solid var(--border); scrollbar-width:none; }
+  .mobile-nav::-webkit-scrollbar { display:none; }
+  .mnav-item { flex-shrink:0; padding:6px 12px; border-radius:25px; border:1.5px solid var(--border); font-size:0.73rem; font-weight:600; color:var(--muted); cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:5px; }
+  .mnav-item.active { background:var(--navy); border-color:var(--navy); color:white; }
+  .mnav-item.completed { background:var(--green-light); border-color:var(--green); color:var(--green); }
+}
+@media(min-width:769px) { .mobile-nav { display:none; } }
+@supports(padding-bottom:env(safe-area-inset-bottom)) { .content { padding-bottom:calc(1.5rem + env(safe-area-inset-bottom)); } }
 </style>
 </head>
 <body>
 
-<div id="welcomeOverlay" class="ai-welcome-overlay">
-  <div class="ai-avatar">
-    <img src="https://images.unsplash.com/photo-1603988492906-4fb0fb251cf8?auto=format&fit=crop&q=80&w=400" alt="Aria Assistant">
+<!-- ══════════ API KEY GATE ══════════ -->
+<div class="key-gate" id="keyGate">
+  <div class="key-gate-box">
+    <div class="key-gate-logo">🔐</div>
+    <h2>ABC Life — Admin Access</h2>
+    <p>Enter your Gemini API key to activate AI features.<br>The key is stored only in your browser session and never sent to any server.</p>
+    <div class="key-models">
+      <span class="key-model-tag">gemini-2.0-flash</span>
+      <span class="key-model-tag">gemini-2.5-flash</span>
+      <span class="key-model-tag">gemini-1.5-pro</span>
+      <span class="key-model-tag">gemini-1.0-pro ↩ fallback</span>
+    </div>
+    <div class="key-input-wrap">
+      <input type="password" id="geminiKeyInput" placeholder="AIza..." autocomplete="off">
+      <button class="key-toggle" onclick="toggleKeyVis()" id="keyToggleBtn">👁️</button>
+    </div>
+    <button class="key-submit" onclick="saveApiKey()">🔓 Activate Portal</button>
+    <div class="key-note">Key saved in sessionStorage only · Cleared when tab closes · No server transmission</div>
   </div>
-  <h1 class="hl-main" style="margin-top:20px; font-size: 2rem;">I am <span>Aria</span></h1>
-  <p style="color:white; opacity:0.8; margin-top:10px;">Your Intelligence Underwriting Assistant</p>
-  <button onclick="startApp()" style="margin-top:30px; background:var(--red); color:white; border:none; padding:15px 50px; border-radius:40px; font-weight:700; cursor:pointer; font-size:1.1rem; box-shadow: 0 4px 20px rgba(232, 25, 44, 0.4);">Begin Proposal</button>
 </div>
 
-<header class="hdr">
-  <div class="hl-main">HDFC <span>Life</span></div>
-</header>
-
-<main class="main-content">
-  <div class="card" id="p1">
-    <h2 style="margin-bottom:1.5rem; color:var(--blue);">Personal Details</h2>
-    <div class="fg">
-      <div class="fld">
-        <label>Full Name (as per PAN)</label>
-        <input type="text" placeholder="Enter name">
-      </div>
-      <div class="fld">
-        <label>Date of Birth</label>
-        <input type="date">
-      </div>
-    </div>
-    <div class="fld">
-      <label>Email Address</label>
-      <input type="email" placeholder="email@example.com">
-    </div>
-  </div>
-
-  <div class="card" id="p2">
-    <h2 style="margin-bottom:1.5rem; color:var(--blue);">Health & Lifestyle</h2>
-    <div class="fld">
-      <label>Do you consume tobacco or nicotine products?</label>
-      <select><option>No</option><option>Yes</option></select>
-    </div>
-    <div class="fld">
-      <label>Any history of heart disease, diabetes, or hypertension?</label>
-      <select><option>None</option><option>Diabetes</option><option>Hypertension</option><option>Other</option></select>
-    </div>
-  </div>
-
-  <div class="card" id="p3">
-    <h2 style="margin-bottom:1.5rem; color:var(--blue);">Nominee Details</h2>
-    <div class="fg">
-      <div class="fld">
-        <label>Nominee Name</label>
-        <input type="text">
-      </div>
-      <div class="fld">
-        <label>Relationship</label>
-        <input type="text">
-      </div>
-    </div>
-  </div>
-</main>
-
-<div id="assistPanel" class="assist-panel">
-  <div class="assist-hdr">
-    <div class="assist-mini-av">
-      <img src="https://images.unsplash.com/photo-1603988492906-4fb0fb251cf8?auto=format&fit=crop&q=80&w=100" alt="Aria Mini">
-    </div>
+<!-- ══════════ SPLASH / WELCOME SCREEN ══════════ -->
+<div class="splash-overlay" id="splashOverlay">
+  <div class="splash-logo">
+    <div class="splash-logo-box">A</div>
     <div>
-      <div style="font-weight:800; font-size:0.9rem;">Aria AI</div>
-      <div style="font-size:0.7rem; opacity:0.8;">Active Underwriting Support</div>
+      <div class="splash-brand-name"><span>ABC</span> Life Insurance</div>
+      <div class="splash-brand-sub">Smart Underwriting Portal</div>
     </div>
   </div>
-  <div id="ariaSpeech" class="assist-body">Connecting...</div>
-  <div class="assist-footer">
-    <input type="text" id="ariaQuery" class="assist-input" placeholder="Ask Aria a question..." onkeypress="if(event.key==='Enter') askGemini(this.value)">
+
+  <div style="position:relative;margin-bottom:1rem;">
+    <div class="splash-ring"></div><div class="splash-ring"></div><div class="splash-ring"></div>
+    <div class="splash-aria-avatar" id="splashAvatar">
+      <!-- Professional Indian Lady SVG -->
+      <svg viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="skinGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#E8B89A"/><stop offset="100%" stop-color="#C8845A"/></radialGradient>
+          <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FDE8D8"/><stop offset="100%" stop-color="#F4C4A0"/></radialGradient>
+        </defs>
+        <circle cx="65" cy="65" r="65" fill="url(#bgGrad)"/>
+        <!-- Business jacket / blazer (navy) -->
+        <ellipse cx="65" cy="108" rx="38" ry="30" fill="#1B4F8A"/>
+        <!-- White shirt underneath -->
+        <path d="M50 85 Q65 90 80 85 L80 95 Q65 100 50 95Z" fill="white"/>
+        <!-- Navy blazer lapels -->
+        <path d="M44 80 Q52 85 65 88 L65 110 Q48 110 40 102 Q36 94 44 80Z" fill="#1B4F8A"/>
+        <path d="M86 80 Q78 85 65 88 L65 110 Q82 110 90 102 Q94 94 86 80Z" fill="#1B4F8A"/>
+        <!-- red blazer buttons -->
+        <circle cx="65" cy="92" r="2.5" fill="#D4AF37"/>
+        <circle cx="65" cy="99" r="2.5" fill="#D4AF37"/>
+        <!-- Neck -->
+        <rect x="56" y="64" width="18" height="18" rx="5" fill="url(#skinGrad)"/>
+        <!-- Head/Face -->
+        <ellipse cx="65" cy="46" rx="22" ry="24" fill="url(#skinGrad)"/>
+        <!-- Professional hair - neat bun at back, with parting -->
+        <path d="M43 38 Q43 20 65 18 Q87 20 87 38 Q87 26 65 24 Q43 26 43 38Z" fill="#1A0A00"/>
+        <ellipse cx="65" cy="19" rx="9" ry="7" fill="#1A0A00"/>
+        <!-- Hair bun detail -->
+        <path d="M60 19 Q65 22 70 19 Q68 17 65 17 Q62 17 60 19Z" fill="#2A1000"/>
+        <!-- Center parting fine line -->
+        <line x1="65" y1="18" x2="65" y2="28" stroke="#1A0A00" stroke-width="1"/>
+        <!-- Sindoor dot (subtle, professional) -->
+        <circle cx="65" cy="26" r="1.5" fill="#C8102E"/>
+        <!-- Eyes - almond shaped, expressive -->
+        <ellipse cx="55" cy="44" rx="5" ry="3.5" fill="white"/>
+        <ellipse cx="75" cy="44" rx="5" ry="3.5" fill="white"/>
+        <!-- Iris -->
+        <ellipse cx="55" cy="44" rx="3" ry="3" fill="#2D1B0E"/>
+        <ellipse cx="75" cy="44" rx="3" ry="3" fill="#2D1B0E"/>
+        <!-- Pupil + shine -->
+        <circle cx="55" cy="44" r="1.5" fill="#0A0500"/>
+        <circle cx="75" cy="44" r="1.5" fill="#0A0500"/>
+        <circle cx="56.2" cy="42.8" r="0.8" fill="white"/>
+        <circle cx="76.2" cy="42.8" r="0.8" fill="white"/>
+        <!-- Eyelashes upper -->
+        <path d="M50 41.5 Q55 40 60 41.5" stroke="#1A0A00" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <path d="M70 41.5 Q75 40 80 41.5" stroke="#1A0A00" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <!-- Eyebrows - neat & arched -->
+        <path d="M50 38.5 Q55 37 60 38.5" stroke="#2D1B0E" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M70 38.5 Q75 37 80 38.5" stroke="#2D1B0E" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- Bindi - professional small red dot -->
+        <circle cx="65" cy="36" r="2.8" fill="#C8102E"/>
+        <circle cx="65" cy="36" r="1" fill="#FFD0D4" opacity="0.5"/>
+        <!-- Nose - delicate -->
+        <ellipse cx="65" cy="50" rx="2" ry="1.2" fill="#C0785A"/>
+        <path d="M63 51 Q65 53 67 51" stroke="#C0785A" stroke-width="0.8" fill="none"/>
+        <!-- Small nose stud / nath -->
+        <circle cx="67.5" cy="50" r="1.3" fill="none" stroke="#D4AF37" stroke-width="0.9"/>
+        <circle cx="67.5" cy="50" r="0.5" fill="#D4AF37"/>
+        <!-- Smile - confident professional -->
+        <path d="M58 57 Q65 62 72 57" stroke="#C0785A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+        <!-- Lip color -->
+        <path d="M59 57.5 Q65 61 71 57.5" fill="#C0785A" opacity="0.4"/>
+        <!-- Ears -->
+        <ellipse cx="43" cy="46" rx="4" ry="5" fill="url(#skinGrad)"/>
+        <ellipse cx="87" cy="46" rx="4" ry="5" fill="url(#skinGrad)"/>
+        <!-- red drop earrings (jhumka style) -->
+        <circle cx="43" cy="44" r="3.5" fill="#D4AF37" stroke="#B8960A" stroke-width="0.5"/>
+        <ellipse cx="43" cy="50" rx="2.5" ry="3.5" fill="#D4AF37"/>
+        <circle cx="43" cy="53.5" r="1.5" fill="#B8960A"/>
+        <circle cx="87" cy="44" r="3.5" fill="#D4AF37" stroke="#B8960A" stroke-width="0.5"/>
+        <ellipse cx="87" cy="50" rx="2.5" ry="3.5" fill="#D4AF37"/>
+        <circle cx="87" cy="53.5" r="1.5" fill="#B8960A"/>
+        <!-- Arms with blazer sleeves -->
+        <path d="M40 80 Q28 88 32 103 Q36 110 42 108" fill="#1B4F8A" stroke="#133A6B" stroke-width="0.5"/>
+        <path d="M90 80 Q102 88 98 103 Q94 110 88 108" fill="#1B4F8A" stroke="#133A6B" stroke-width="0.5"/>
+        <!-- Hands/wrists -->
+        <ellipse cx="31.5" cy="106" rx="5" ry="4" fill="url(#skinGrad)"/>
+        <ellipse cx="98.5" cy="106" rx="5" ry="4" fill="url(#skinGrad)"/>
+        <!-- Thin red watch on right wrist -->
+        <rect x="93" y="103" width="11" height="5" rx="2" fill="#D4AF37"/>
+        <rect x="95" y="104" width="7" height="3" rx="1" fill="#1B4F8A"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="splash-name"><span>Aria</span> — Your Insurance Guide</div>
+  <div class="splash-role">ABC Life AI Assistant · Powered by Gemini AI</div>
+  <div class="splash-bubble" id="splashBubble">
+    Namaste! 🙏 I'm Aria, your dedicated guide for today's underwriting proposal. I'll help you every step of the way — fill any section in any order, upload documents for instant verification, and ask me anything! Shall we begin?
+  </div>
+  <div class="splash-waves" id="splashWaves">
+    <div class="w" style="width:3px;border-radius:3px;background:#D4AF37;animation:waveBounce 0.6s ease infinite;animation-delay:0s;height:6px;"></div>
+    <div class="w" style="width:3px;border-radius:3px;background:#D4AF37;animation:waveBounce 0.6s ease infinite;animation-delay:0.1s;height:14px;"></div>
+    <div class="w" style="width:3px;border-radius:3px;background:#D4AF37;animation:waveBounce 0.6s ease infinite;animation-delay:0.2s;height:20px;"></div>
+    <div class="w" style="width:3px;border-radius:3px;background:#D4AF37;animation:waveBounce 0.6s ease infinite;animation-delay:0.3s;height:14px;"></div>
+    <div class="w" style="width:3px;border-radius:3px;background:#D4AF37;animation:waveBounce 0.6s ease infinite;animation-delay:0.4s;height:6px;"></div>
+  </div>
+  <div>
+    <button class="splash-btn primary" onclick="startPortal(true)">🎙️ Begin with Voice</button>
+    <button class="splash-btn secondary" onclick="startPortal(false)">Continue Silently</button>
+  </div>
+  <div class="splash-credit">Conceptualised by <strong>Raman Jha</strong> · ABC Life Insurance · Smart UW Portal v3.0</div>
+</div>
+
+<!-- ══════════ HEADER ══════════ -->
+<div class="hdr">
+  <div class="hdr-brand">
+    <div class="hdr-logo-box">A</div>
+    <div class="hdr-text">
+      <div class="hl-main"><span>ABC</span> Life Insurance</div>
+      <div class="hl-sub">Smart Underwriting Portal</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="hdr-badge" id="overallBadge">📋 0% Complete</div>
+    <div class="hdr-aria-btn" onclick="toggleAriaPanel()">
+      <span id="ariaWaveInline" style="display:flex;align-items:center;gap:2px;">
+        <span class="w" style="width:2px;height:8px;background:var(--red);border-radius:2px;"></span>
+        <span class="w" style="width:2px;height:12px;background:var(--red);border-radius:2px;animation:waveBounce 0.5s ease infinite;animation-delay:0.1s;"></span>
+        <span class="w" style="width:2px;height:8px;background:var(--red);border-radius:2px;"></span>
+      </span>
+      Aria
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav"></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toastIcon">✨</span><span id="toastMsg">...</span></div>
+
+<!-- ══════════ DASHBOARD ══════════ -->
+<div class="dashboard">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-overall">
+      <div class="sidebar-overall-pct" id="overallPct">0%</div>
+      <div class="sidebar-overall-lbl">Overall Completion</div>
+      <div class="sidebar-bar"><div class="sidebar-bar-fill" id="overallBarFill" style="width:0%"></div></div>
+    </div>
+    <div class="sidebar-title">PROPOSAL SECTIONS</div>
+    <div id="sidebarNav"></div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-title">DOCUMENTS</div>
+    <div class="req-section-btn" id="reqNavBtn" onclick="showSection('requirements')">
+      <div class="req-section-btn-icon">📎</div>
+      <div class="req-section-btn-text">
+        <div class="rsb-name">Document Checklist</div>
+        <div class="rsb-sub">KYC · Medical · Financial</div>
+      </div>
+    </div>
+    <div class="sidebar-divider"></div>
+    <div style="padding:0 0.5rem;">
+      <button class="btn-red" style="width:100%;justify-content:center;font-size:0.82rem;" onclick="previewJSON()">{ } Export JSON</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- PHONE / KYC AUTOFILL BOX (shown on profile section) -->
+    <div id="autofillBox" class="hidden">
+      <div class="phone-lookup-box">
+        <div style="position:relative;z-index:1;">
+          <div class="phone-lookup-title">⚡ Smart Auto-Fill — Start Fast</div>
+          <div class="phone-lookup-sub">Enter mobile number for instant lookup, or upload KYC documents to auto-fill the form using AI-powered OCR. If unavailable, fill manually.</div>
+          <div class="phone-lookup-row">
+            <input type="tel" id="phoneLookupInput" placeholder="+91 98765 43210" maxlength="15">
+            <button class="phone-lookup-btn" onclick="doPhoneLookup()">🔍 Lookup</button>
+          </div>
+          <div class="lookup-methods">
+            <div class="lookup-method-btn active-method" id="lmPhone" onclick="setLookupMethod('phone')">📱 Phone Lookup</div>
+            <div class="lookup-method-btn" id="lmKyc" onclick="setLookupMethod('kyc')">🪪 Upload KYC</div>
+            <div class="lookup-method-btn" id="lmManual" onclick="setLookupMethod('manual')">✏️ Fill Manually</div>
+          </div>
+          <div id="kycUploadInline" class="hidden" style="margin-top:0.75rem;">
+            <label style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(255,255,255,0.1);border:1.5px dashed rgba(255,255,255,0.3);border-radius:10px;cursor:pointer;font-size:0.8rem;color:rgba(255,255,255,0.8);">
+              <input type="file" id="kycInlineFile" accept="image/*,.pdf" onchange="ocrAndAutofill(this,'profile')">
+              📤 Upload Aadhaar / PAN / Passport to auto-fill →
+            </label>
+          </div>
+          <div id="autofillStatus" style="margin-top:8px;font-size:0.78rem;color:rgba(255,255,255,0.6);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: CUSTOMER PROFILE ===== -->
+    <div class="section-panel active" id="panel-profile">
+      <div class="sec-header">
+        <div class="sec-header-left">
+          <div class="sec-header-icon ic-navy">👤</div>
+          <div><div class="sec-ttl">Customer Profile</div><div class="sec-sub">Basic identity, contact and address. Auto-fill from KYC docs or enter manually.</div></div>
+        </div>
+        <div class="sec-status-badge badge-empty" id="badge-profile">○ Not started</div>
+      </div>
+
+      <div class="card">
+        <div class="fg">
+          <div class="fld"><label>Salutation <span class="req">*</span></label><select id="salutation" onchange="handleSalutation();trackField('profile')"><option value="">Select</option><option>Mr.</option><option>Mrs.</option><option>Ms.</option><option>Dr.</option><option>Prof.</option></select></div>
+          <div class="fld"><label>Gender <span class="req">*</span></label><select id="gender" onchange="trackField('profile')"><option value="">Select</option><option>Male</option><option>Female</option><option>Non-binary</option><option>Prefer not to say</option></select></div>
+          <div class="fld"><label>First Name <span class="req">*</span></label><input type="text" id="firstName" placeholder="First name" oninput="trackField('profile')"></div>
+          <div class="fld"><label>Middle Name <span class="opt">optional</span></label><input type="text" id="middleName" placeholder="Middle name"></div>
+          <div class="fld full"><label>Last Name / Surname <span class="req">*</span></label><input type="text" id="lastName" placeholder="Last name" oninput="trackField('profile')"></div>
+          <div class="fld"><label>Date of Birth <span class="req">*</span></label><input type="date" id="dob" onchange="calcAge();trackField('profile')"></div>
+          <div class="fld"><label>Age</label><input type="text" id="ageDisplay" placeholder="Auto-calculated" readonly></div>
+          <div class="fld"><label>Nationality <span class="req">*</span></label><select id="nationality" onchange="trackField('profile')"><option value="">Select</option><option>Indian</option><option>NRI</option><option>PIO</option><option>Foreign National</option></select></div>
+          <div class="fld"><label>Marital Status <span class="req">*</span></label><select id="marital" onchange="handleMarital();trackField('profile')"><option value="">Select</option><option>Single</option><option>Married</option><option>Divorced</option><option>Widowed</option></select></div>
+        </div>
+        <div id="spouseReveal" class="hidden">
+          <div class="divider"></div>
+          <div class="sub"><div class="sub-ttl">💑 Spouse Details</div>
+            <div class="fg"><div class="fld"><label>Spouse Full Name</label><input type="text" id="spouseName" placeholder="Spouse's full name"></div><div class="fld"><label>Spouse Date of Birth</label><input type="date" id="spouseDob"></div></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="sub-ttl" style="font-size:0.85rem;font-weight:700;color:var(--ink);margin-bottom:1rem;">🪪 Identity Documents</div>
+        <div class="fg">
+          <div class="fld"><label>PAN Number <span class="req">*</span></label><input type="text" id="pan" placeholder="ABCDE1234F" maxlength="10" oninput="this.value=this.value.toUpperCase();trackField('profile')"><div class="fld-match" id="panMatch"></div></div>
+          <div class="fld"><label>Aadhaar Number <span class="req">*</span></label><input type="text" id="aadhaar" placeholder="XXXX XXXX XXXX" maxlength="14" oninput="trackField('profile')"><div class="fld-match" id="aadhaarMatch"></div></div>
+          <div class="fld"><label>Passport Number <span class="opt">if applicable</span></label><input type="text" id="passport" placeholder="Passport number"></div>
+          <div class="fld"><label>Voter ID / DL <span class="opt">optional</span></label><input type="text" id="voterId" placeholder="Voter ID or Driving License"></div>
+        </div>
+        <div class="divider"></div>
+        <div class="sub-ttl" style="font-size:0.85rem;font-weight:700;color:var(--ink);margin-bottom:1rem;">📞 Contact Details</div>
+        <div class="fg">
+          <div class="fld"><label>Mobile Number <span class="req">*</span></label><input type="tel" id="mobile" placeholder="+91 XXXXX XXXXX" oninput="trackField('profile')"><div class="fld-match" id="mobileMatch"></div></div>
+          <div class="fld"><label>Alternate Mobile <span class="opt">optional</span></label><input type="tel" placeholder="Alternate number"></div>
+          <div class="fld full"><label>Email Address <span class="req">*</span></label><input type="email" id="email" placeholder="you@example.com" oninput="trackField('profile')"></div>
+        </div>
+        <div class="divider"></div>
+        <div class="sub-ttl" style="font-size:0.85rem;font-weight:700;color:var(--ink);margin-bottom:1rem;">🏠 Residential Address</div>
+        <div class="fg g1">
+          <div class="fld"><label>Address Line 1 <span class="req">*</span></label><input type="text" id="addr1" placeholder="Flat / House No., Building Name" oninput="trackField('profile')"><div class="fld-match" id="addrMatch"></div></div>
+          <div class="fld"><label>Address Line 2</label><input type="text" id="addr2" placeholder="Street, Area"></div>
+        </div>
+        <div class="fg g3">
+          <div class="fld"><label>City <span class="req">*</span></label><input type="text" id="city" placeholder="City" oninput="trackField('profile')"></div>
+          <div class="fld"><label>State <span class="req">*</span></label><select id="state" onchange="trackField('profile')"><option value="">Select state</option><option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option><option>Delhi</option><option>Gujarat</option><option>Haryana</option><option>Karnataka</option><option>Kerala</option><option>Maharashtra</option><option>Madhya Pradesh</option><option>Punjab</option><option>Rajasthan</option><option>Tamil Nadu</option><option>Telangana</option><option>Uttar Pradesh</option><option>West Bengal</option><option>Other</option></select></div>
+          <div class="fld"><label>PIN Code <span class="req">*</span></label><input type="text" id="pincode" placeholder="6-digit PIN" maxlength="6" oninput="trackField('profile')"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="saveSection('profile')">✓ Save Profile</button>
+          <button class="btn-secondary" onclick="showSection('proposer')">Next: Proposer →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: PROPOSER ===== -->
+    <div class="section-panel" id="panel-proposer">
+      <div class="sec-header">
+        <div class="sec-header-left"><div class="sec-header-icon ic-navy">📋</div><div><div class="sec-ttl">Proposer Details</div><div class="sec-sub">Person submitting this proposal and policy ownership.</div></div></div>
+        <div class="sec-status-badge badge-empty" id="badge-proposer">○ Not started</div>
+      </div>
+      <div class="card">
+        <label style="display:flex;align-items:center;gap:9px;padding:9px 13px;background:var(--navy-light);border:1.5px dashed rgba(27,79,138,0.35);border-radius:var(--r-sm);cursor:pointer;margin-bottom:0.9rem;font-size:0.82rem;color:var(--navy);font-weight:600;">
+          <input type="checkbox" id="proposerSameChk" onchange="handleProposerSame()" style="accent-color:var(--navy);width:15px;height:15px;">
+          📌 Proposer is same as Life Assured — tick to auto-fill
+        </label>
+        <div class="fg">
+          <div class="fld"><label>Proposer Full Name <span class="req">*</span></label><input type="text" id="propName" placeholder="Full legal name" oninput="trackField('proposer')"></div>
+          <div class="fld"><label>Relationship to LA <span class="req">*</span></label><select id="propRel" onchange="trackField('proposer')"><option value="">Select</option><option>Self</option><option>Spouse</option><option>Parent</option><option>Child</option><option>Employer</option><option>Other</option></select></div>
+          <div class="fld"><label>Date of Birth <span class="req">*</span></label><input type="date" id="propDob" oninput="trackField('proposer')"></div>
+          <div class="fld"><label>PAN Number <span class="req">*</span></label><input type="text" placeholder="PAN" oninput="trackField('proposer')"></div>
+          <div class="fld"><label>Mobile <span class="req">*</span></label><input type="tel" placeholder="+91" oninput="trackField('proposer')"></div>
+          <div class="fld"><label>Email <span class="req">*</span></label><input type="email" placeholder="Email" oninput="trackField('proposer')"></div>
+        </div>
+        <div class="divider"></div>
+        <div class="sec-ttl" style="font-size:1rem;margin-bottom:1rem;">Policy Owner</div>
+        <div class="owner-card sel" onclick="selectOwner('self',this)"><input type="radio" name="ownerType" value="self" checked><div><div style="font-weight:600;font-size:0.88rem;">🧑 Life Assured (Self)</div><div style="font-size:0.77rem;color:var(--muted);">The insured person is also the policy owner.</div></div></div>
+        <div class="owner-card" onclick="selectOwner('proposer',this)"><input type="radio" name="ownerType" value="proposer"><div><div style="font-weight:600;font-size:0.88rem;">📋 Proposer</div><div style="font-size:0.77rem;color:var(--muted);">The proposer named above will be the policy owner.</div></div></div>
+        <div class="owner-card" onclick="selectOwner('other',this)"><input type="radio" name="ownerType" value="other"><div><div style="font-weight:600;font-size:0.88rem;">👤 Other Person</div><div style="font-size:0.77rem;color:var(--muted);">A different individual (e.g. employer, trust, guardian).</div></div></div>
+        <div class="divider"></div>
+        <div class="sub-ttl" style="margin-bottom:1rem;">🎯 Nominee Details</div>
+        <div class="nudge good"><span class="nudge-ico">✅</span><span>Add nominees carefully — they receive the claim. You can split the share among multiple nominees.</span></div>
+        <div id="nomineeContainer">
+          <div class="nom-row"><div class="fld"><label>Nominee Name <span class="req">*</span></label><input type="text" placeholder="Full name"></div><div class="fld"><label>Relationship</label><select><option value="">Select</option><option>Spouse</option><option>Child</option><option>Parent</option><option>Sibling</option><option>Other</option></select></div><div class="fld"><label>Share %</label><input type="number" placeholder="100" min="1" max="100"></div><div style="padding-top:22px;"><button class="btn-rm" onclick="this.closest('.nom-row').remove()">✕</button></div></div>
+        </div>
+        <button class="btn-add" style="margin-top:8px;" onclick="addNominee()">➕ Add Nominee</button>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="saveSection('proposer')">✓ Save Proposer</button>
+          <button class="btn-secondary" onclick="showSection('occupation')">Next: Occupation →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: OCCUPATION ===== -->
+    <div class="section-panel" id="panel-occupation">
+      <div class="sec-header">
+        <div class="sec-header-left"><div class="sec-header-icon ic-teal">💼</div><div><div class="sec-ttl">Occupation & Income</div><div class="sec-sub">Your professional background helps determine the right coverage level.</div></div></div>
+        <div class="sec-status-badge badge-empty" id="badge-occupation">○ Not started</div>
+      </div>
+      <div class="card">
+        <div class="fg">
+          <div class="fld"><label>Employment Type <span class="req">*</span></label><select id="empType" onchange="handleEmpType();trackField('occupation')"><option value="">Select</option><option>Salaried – Private Sector</option><option>Salaried – Government / PSU</option><option>Self Employed – Business</option><option>Self Employed – Professional</option><option>Retired</option><option>Homemaker</option><option>Student</option><option>Agriculturist</option><option>Unemployed</option></select></div>
+          <div class="fld"><label>Designation / Job Title <span class="req">*</span></label><select id="designation" onchange="trackField('occupation')"><option value="">Select</option><option>MD / CEO / Director</option><option>VP / AVP / GM</option><option>Manager / Sr. Manager</option><option>Doctor / Medical Professional</option><option>Chartered Accountant</option><option>Lawyer / Advocate</option><option>Engineer / Architect</option><option>Software Developer / IT</option><option>Analyst / Consultant</option><option>Sales / Marketing</option><option>Own Business / Proprietor</option><option>Other</option></select></div>
+        </div>
+        <div id="salariedFields" class="hidden"><div class="sub"><div class="sub-ttl">🏢 Employer Details</div><div class="fg"><div class="fld"><label>Employer Name</label><input type="text" placeholder="Company name"></div><div class="fld"><label>Industry</label><select><option value="">Select</option><option>Banking & Finance</option><option>IT / Technology</option><option>Healthcare</option><option>Manufacturing</option><option>Education</option><option>Government</option><option>Other</option></select></div><div class="fld"><label>Years in Job</label><select><option value="">Select</option><option>Less than 1 yr</option><option>1–3 years</option><option>3–5 years</option><option>5+ years</option></select></div><div class="fld"><label>Work City</label><input type="text" placeholder="City of work"></div></div></div></div>
+        <div id="businessFields" class="hidden"><div class="sub"><div class="sub-ttl">🏪 Business Details</div><div class="fg"><div class="fld"><label>Business Name</label><input type="text" placeholder="Firm name"></div><div class="fld"><label>Nature of Business</label><input type="text" placeholder="What do you do?"></div><div class="fld"><label>Years in Business</label><select><option value="">Select</option><option>Less than 2 yrs</option><option>2–5 years</option><option>5–10 years</option><option>10+ years</option></select></div><div class="fld"><label>Employees</label><select><option value="">Select</option><option>Solo</option><option>2–10</option><option>11–50</option><option>50+</option></select></div></div></div></div>
+        <div class="divider"></div>
+        <div class="fg">
+          <div class="fld"><label>Annual Income (₹) <span class="req">*</span></label><select id="annualIncome" onchange="trackField('occupation')"><option value="">Select range</option><option>Up to ₹3 Lakh</option><option>₹3–5 Lakh</option><option>₹5–10 Lakh</option><option>₹10–15 Lakh</option><option>₹15–25 Lakh</option><option>₹25–50 Lakh</option><option>₹50L – ₹1 Crore</option><option>Above ₹1 Crore</option></select></div>
+          <div class="fld"><label>Income Source <span class="req">*</span></label><select onchange="trackField('occupation')"><option value="">Select</option><option>Salary / Wages</option><option>Business Profit</option><option>Professional Fees</option><option>Rental Income</option><option>Investment Returns</option><option>Agriculture</option><option>Pension</option></select></div>
+          <div class="fld"><label>Education</label><select><option value="">Select</option><option>Post Graduate & Above</option><option>Graduate</option><option>12th Pass</option><option>10th Pass</option><option>Below 10th</option></select></div>
+          <div class="fld"><label>Salary Receipt Mode</label><select><option value="">Select</option><option>Bank Transfer</option><option>Cheque</option><option>Cash</option></select></div>
+        </div>
+        <div class="tog-wrap"><label class="tog"><input type="checkbox" id="hazardToggle" onchange="handleToggle('hazardToggle','hazardFields');trackField('occupation')"><span class="tog-sl"></span></label><div><div class="tog-lbl">⚠️ Hazardous / High-Risk Occupation</div><div class="tog-desc">Mining, aviation, army, deep-sea, chemicals, construction at heights</div></div></div>
+        <div id="hazardFields" class="hidden"><div class="sub"><div class="sub-ttl">⚠️ Hazardous Occupation Details</div><div class="fld"><label>Describe nature of hazardous work</label><textarea placeholder="Frequency, location, safety measures..."></textarea></div></div></div>
+        <div class="divider"></div>
+        <div class="tog-wrap"><label class="tog"><input type="checkbox" id="existingPolicyToggle" onchange="handleToggle('existingPolicyToggle','existingPolicyFields')"><span class="tog-sl"></span></label><div><div class="tog-lbl">📄 I have existing life insurance policies</div><div class="tog-desc">Disclose all in-force and recently lapsed policies</div></div></div>
+        <div id="existingPolicyFields" class="hidden"><div class="sub"><div id="policyContainer"><div class="fg" style="background:white;padding:12px;border-radius:10px;border:1px solid var(--border);margin-bottom:8px;"><div class="fld"><label>Insurer</label><input type="text" placeholder="Company name"></div><div class="fld"><label>Type</label><select><option value="">Select</option><option>Term</option><option>Endowment</option><option>ULIP</option><option>Whole Life</option></select></div><div class="fld"><label>Sum Assured (₹)</label><input type="text" placeholder="Amount"></div><div class="fld"><label>Status</label><select><option>In Force</option><option>Lapsed</option><option>Surrendered</option></select></div></div></div><button class="btn-add" onclick="addPolicy()">➕ Add Policy</button></div></div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="saveSection('occupation')">✓ Save Occupation</button>
+          <button class="btn-secondary" onclick="showSection('health')">Next: Health →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: HEALTH ===== -->
+    <div class="section-panel" id="panel-health">
+      <div class="sec-header">
+        <div class="sec-header-left"><div class="sec-header-icon ic-teal">💪</div><div><div class="sec-ttl">Health & Medical Profile</div><div class="sec-sub">Your health snapshot helps us offer the right plan. Accurate disclosure protects your claims.</div></div></div>
+        <div class="sec-status-badge badge-empty" id="badge-health">○ Not started</div>
+      </div>
+      <div class="card">
+        <div class="fg g3">
+          <div class="fld"><label>Height <span class="req">*</span></label><div class="inp-unit"><input type="number" id="height" placeholder="170" onchange="calcBMI();trackField('health')"><span class="unit-tag">cm</span></div></div>
+          <div class="fld"><label>Weight <span class="req">*</span></label><div class="inp-unit"><input type="number" id="weight" placeholder="70" onchange="calcBMI();trackField('health')"><span class="unit-tag">kg</span></div></div>
+          <div class="fld"><label>Blood Group</label><select onchange="trackField('health')"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></div>
+        </div>
+        <div id="bmiDisplay" class="hidden"><div class="bmi-box"><div><div class="bmi-lbl">YOUR BMI</div><div class="bmi-num" id="bmiVal">—</div></div><div style="text-align:right;"><div class="bmi-cat" id="bmiCat">—</div><div class="bmi-lbl" style="margin-top:4px;" id="bmiTip">—</div></div></div></div>
+        <div class="divider"></div>
+        <div class="sub-ttl" style="font-size:0.85rem;font-weight:700;color:var(--ink);margin-bottom:0.75rem;">🩻 Current Health Conditions (select all that apply)</div>
+        <div class="cond-grid" id="conditionGrid">
+          <label class="cond-pill"><input type="checkbox" onchange="toggleCond(this,'diabetes');trackField('health')"> 🩸 Diabetes</label>
+          <label class="cond-pill"><input type="checkbox" onchange="toggleCond(this,'hypertension');trackField('health')"> 💉 Hypertension</label>
+          <label class="cond-pill"><input type="checkbox" onchange="toggleCond(this,'heart');trackField('health')"> ❤️ Heart Disease</label>
+          <label class="cond-pill"><input type="checkbox" onchange="toggleCond(this,'cancer');trackField('health')"> 🔬 Cancer</label>
+          <label class="cond-pill"><input type="checkbox" onchange="toggleCond(this,'kidney');trackField('health')"> 🫘 Kidney Disease</label>
+          <label class="cond-pill"><input type="checkbox" onchange="toggleCond(this,'liver');trackField('health')"> 🫀 Liver Disorder</label>
+          <label class="cond-pill"><input type="checkbox" onchange="toggleCond(this,'thyroid');trackField('health')"> 🧬 Thyroid</label>
+          <label class="cond-pill"><input type="checkbox" onchange="toggleCond(this,'asthma');trackField('health')"> 🌬️ Asthma / Resp.</label>
+          <label class="cond-pill"><input type="checkbox" onchange="toggleCond(this,'mental');trackField('health')"> 🧠 Mental Health</label>
+          <label class="cond-pill" id="pillNone"><input type="checkbox" onchange="toggleCond(this,'none');trackField('health')"> ✅ None of the above</label>
+        </div>
+        <div id="condDetails"></div>
+        <div class="divider"></div>
+        <div class="tog-wrap"><label class="tog"><input type="checkbox" id="surgeryToggle" onchange="handleToggle('surgeryToggle','surgeryFields');trackField('health')"><span class="tog-sl"></span></label><div><div class="tog-lbl">🏥 Surgeries / Hospitalisations in last 10 years</div></div></div>
+        <div id="surgeryFields" class="hidden"><div class="sub"><div id="surgeryContainer"><div class="fg" style="background:white;padding:12px;border-radius:10px;border:1px solid var(--border);"><div class="fld"><label>Procedure</label><input type="text" placeholder="e.g. Appendectomy"></div><div class="fld"><label>Year</label><input type="number" placeholder="Year"></div><div class="fld"><label>Hospital</label><input type="text" placeholder="Hospital name"></div><div class="fld"><label>Outcome</label><select><option>Fully recovered</option><option>Recovering</option><option>Complications</option></select></div></div></div><button class="btn-add" style="margin-top:8px;" onclick="addSurgery()">➕ Add Surgery</button></div></div>
+        <div class="tog-wrap"><label class="tog"><input type="checkbox" id="medToggle" onchange="handleToggle('medToggle','medFields');trackField('health')"><span class="tog-sl"></span></label><div><div class="tog-lbl">💊 Currently on prescription medication</div></div></div>
+        <div id="medFields" class="hidden"><div class="sub"><div class="fld"><label>Medications</label><textarea placeholder="Name, dose, frequency and reason..."></textarea></div></div></div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="saveSection('health')">✓ Save Health</button>
+          <button class="btn-secondary" onclick="showSection('family')">Next: Family →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: FAMILY HISTORY ===== -->
+    <div class="section-panel" id="panel-family">
+      <div class="sec-header">
+        <div class="sec-header-left"><div class="sec-header-icon ic-amber">👨‍👩‍👧</div><div><div class="sec-ttl">Family Health History</div><div class="sec-sub">Hereditary conditions help assess long-term risk. Honest disclosure protects future claims.</div></div></div>
+        <div class="sec-status-badge badge-empty" id="badge-family">○ Not started</div>
+      </div>
+      <div class="card">
+        <div class="nudge info"><span class="nudge-ico">🧬</span><span>Family history of diabetes, heart disease, and cancer significantly impacts underwriting. Please be thorough.</span></div>
+        <div style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:0.9rem;margin-bottom:0.65rem;">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:0.7rem;font-weight:700;font-size:0.88rem;">👴 Father</div>
+          <div class="fg g3"><div class="fld"><label>Status</label><select onchange="trackField('family')"><option>Alive</option><option>Deceased</option></select></div><div class="fld"><label>Age / Age at Death</label><input type="number" placeholder="Age" oninput="trackField('family')"></div><div class="fld"><label>Cause of Death</label><input type="text" placeholder="If deceased"></div></div>
+          <div class="cond-grid" style="margin-top:8px;"><label class="cond-pill"><input type="checkbox" onchange="tfp(this)"> 🩸 Diabetes</label><label class="cond-pill"><input type="checkbox" onchange="tfp(this)"> ❤️ Heart Disease</label><label class="cond-pill"><input type="checkbox" onchange="tfp(this)"> 🔬 Cancer</label><label class="cond-pill"><input type="checkbox" onchange="tfp(this)"> 💉 Hypertension</label><label class="cond-pill"><input type="checkbox" onchange="tfp(this)"> ✅ No known illness</label></div>
+        </div>
+        <div style="background:white;border:1.5px solid var(--border);border-radius:10px;padding:0.9rem;margin-bottom:0.65rem;">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:0.7rem;font-weight:700;font-size:0.88rem;">👵 Mother</div>
+          <div class="fg g3"><div class="fld"><label>Status</label><select onchange="trackField('family')"><option>Alive</option><option>Deceased</option></select></div><div class="fld"><label>Age / Age at Death</label><input type="number" placeholder="Age" oninput="trackField('family')"></div><div class="fld"><label>Cause of Death</label><input type="text" placeholder="If deceased"></div></div>
+          <div class="cond-grid" style="margin-top:8px;"><label class="cond-pill"><input type="checkbox" onchange="tfp(this)"> 🩸 Diabetes</label><label class="cond-pill"><input type="checkbox" onchange="tfp(this)"> ❤️ Heart Disease</label><label class="cond-pill"><input type="checkbox" onchange="tfp(this)"> 🔬 Cancer</label><label class="cond-pill"><input type="checkbox" onchange="tfp(this)"> 💉 Hypertension</label><label class="cond-pill"><input type="checkbox" onchange="tfp(this)"> ✅ No known illness</label></div>
+        </div>
+        <div class="fld"><label>Other Hereditary Conditions</label><textarea placeholder="Any genetic disorders, rare diseases..." oninput="trackField('family')"></textarea></div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="saveSection('family')">✓ Save Family History</button>
+          <button class="btn-secondary" onclick="showSection('lifestyle')">Next: Lifestyle →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: LIFESTYLE ===== -->
+    <div class="section-panel" id="panel-lifestyle">
+      <div class="sec-header">
+        <div class="sec-header-left"><div class="sec-header-icon ic-navy">🌟</div><div><div class="sec-ttl">Lifestyle & Habits</div><div class="sec-sub">Honest answers help us offer the most accurate premium.</div></div></div>
+        <div class="sec-status-badge badge-empty" id="badge-lifestyle">○ Not started</div>
+      </div>
+      <div class="card">
+        <div class="sub-ttl" style="font-size:0.85rem;font-weight:700;color:var(--ink);margin-bottom:1rem;">🚬 Tobacco & Smoking</div>
+        <div class="fld" style="margin-bottom:1rem;"><label>Smoking / Tobacco Use <span class="req">*</span></label>
+          <div class="pill-grp">
+            <label class="pill" onclick="selectPill(this,'smokeGroup','never')" data-group="smokeGroup" data-val="never"><input type="radio" name="smoke" value="never" onchange="trackField('lifestyle')"> ✅ Never</label>
+            <label class="pill" onclick="selectPill(this,'smokeGroup','current')" data-group="smokeGroup" data-val="current"><input type="radio" name="smoke" value="current" onchange="trackField('lifestyle')"> 🚬 Current</label>
+            <label class="pill" onclick="selectPill(this,'smokeGroup','former')" data-group="smokeGroup" data-val="former"><input type="radio" name="smoke" value="former" onchange="trackField('lifestyle')"> 🕐 Former</label>
+            <label class="pill" onclick="selectPill(this,'smokeGroup','chew')" data-group="smokeGroup" data-val="chew"><input type="radio" name="smoke" value="chew" onchange="trackField('lifestyle')"> 🌿 Chewing</label>
+          </div>
+        </div>
+        <div id="smokeDetails" class="hidden"><div class="sub"><div class="fg g3"><div class="fld"><label>Type</label><select><option>Cigarette</option><option>Cigar</option><option>Bidi</option><option>E-cig/Vape</option></select></div><div class="fld"><label>Since (year)</label><input type="number" placeholder="Year started"></div><div class="fld"><label>Qty/day</label><select><option>1–5</option><option>6–10</option><option>11–20</option><option>20+</option></select></div></div></div></div>
+        <div class="divider"></div>
+        <div class="sub-ttl" style="font-size:0.85rem;font-weight:700;color:var(--ink);margin-bottom:1rem;">🍷 Alcohol Consumption</div>
+        <div class="fld" style="margin-bottom:1rem;"><label>Alcohol Use <span class="req">*</span></label>
+          <div class="pill-grp">
+            <label class="pill" onclick="selectPill(this,'alcGroup','never')" data-group="alcGroup"><input type="radio" name="alc" value="never" onchange="trackField('lifestyle')"> ✅ Never</label>
+            <label class="pill" onclick="selectPill(this,'alcGroup','occasional')" data-group="alcGroup"><input type="radio" name="alc" value="occasional" onchange="trackField('lifestyle')"> 🥂 Occasional</label>
+            <label class="pill" onclick="selectPill(this,'alcGroup','moderate')" data-group="alcGroup"><input type="radio" name="alc" value="moderate" onchange="trackField('lifestyle')"> 🍺 Moderate</label>
+            <label class="pill" onclick="selectPill(this,'alcGroup','heavy')" data-group="alcGroup"><input type="radio" name="alc" value="heavy" onchange="trackField('lifestyle')"> 🥃 Heavy</label>
+          </div>
+        </div>
+        <div id="alcDetails" class="hidden"><div class="sub"><div class="fg g3"><div class="fld"><label>Type</label><select><option>Beer</option><option>Wine</option><option>Spirits</option><option>Mixed</option></select></div><div class="fld"><label>Frequency</label><select><option>Weekends</option><option>2–3x/week</option><option>Daily</option></select></div><div class="fld"><label>Units/week</label><input type="number" placeholder="Standard units"></div></div></div></div>
+        <div class="divider"></div>
+        <div class="fg">
+          <div class="fld"><label>Exercise Frequency</label><div class="pill-grp"><label class="pill" onclick="selectPill(this,'exG','none')" data-group="exG"><input type="radio" name="ex"> 😴 None</label><label class="pill" onclick="selectPill(this,'exG','light')" data-group="exG"><input type="radio" name="ex"> 🚶 Light</label><label class="pill" onclick="selectPill(this,'exG','moderate')" data-group="exG"><input type="radio" name="ex"> 🏃 Moderate</label><label class="pill" onclick="selectPill(this,'exG','intense')" data-group="exG"><input type="radio" name="ex"> 💪 Intense</label></div></div>
+          <div class="fld"><label>Diet Type</label><div class="pill-grp"><label class="pill" onclick="selectPill(this,'dietG','veg')" data-group="dietG"><input type="radio" name="diet"> 🥦 Veg</label><label class="pill" onclick="selectPill(this,'dietG','non')" data-group="dietG"><input type="radio" name="diet"> 🍗 Non-Veg</label><label class="pill" onclick="selectPill(this,'dietG','vegan')" data-group="dietG"><input type="radio" name="diet"> 🌱 Vegan</label></div></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="saveSection('lifestyle')">✓ Save Lifestyle</button>
+          <button class="btn-secondary" onclick="showSection('aml')">Next: AML →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: AML ===== -->
+    <div class="section-panel" id="panel-aml">
+      <div class="sec-header">
+        <div class="sec-header-left"><div class="sec-header-icon ic-red">🛡️</div><div><div class="sec-ttl">AML & Compliance</div><div class="sec-sub">Mandatory declarations under IRDAI / PMLA 2002. Answer Yes or No for each.</div></div></div>
+        <div class="sec-status-badge badge-empty" id="badge-aml">○ Not started</div>
+      </div>
+      <div class="card">
+        <div class="nudge warn"><span class="nudge-ico">⚠️</span><span>These are <strong>legally mandatory</strong> under Indian law. Incorrect disclosure may invalidate your policy. Honest disclosure is always safe.</span></div>
+        <div class="aml-q" id="amlPEP"><div class="aml-qt"><strong>🏛️ Politically Exposed Person (PEP)</strong><span>Are you or any close relative a current or former senior public official, government minister, judge, military officer?</span></div><div class="aml-btns"><div class="aml-btn" onclick="amlAnswer('amlPEP','yes',this)">Yes</div><div class="aml-btn" onclick="amlAnswer('amlPEP','no',this)">No</div></div></div>
+        <div id="amlPEPDetail" class="hidden"><div class="sub"><div class="fg"><div class="fld"><label>Name of PEP</label><input type="text" placeholder="Full name"></div><div class="fld"><label>Position held</label><input type="text" placeholder="Official position"></div><div class="fld"><label>Country</label><input type="text" placeholder="Country"></div><div class="fld"><label>Status</label><select><option>Currently holding</option><option>Held in past (within 5 yrs)</option></select></div></div></div></div>
+        <div class="aml-q" id="amlFunds" style="margin-top:8px;"><div class="aml-qt"><strong>💰 Source of Funds</strong><span>Is the premium being funded from known, legitimate income sources (salary, business, investments)?</span></div><div class="aml-btns"><div class="aml-btn" onclick="amlAnswer('amlFunds','yes',this)">Yes</div><div class="aml-btn" onclick="amlAnswer('amlFunds','no',this)">No</div></div></div>
+        <div id="amlFundsDetail" class="hidden"><div class="sub"><div class="fld"><label>Describe source of premium payment</label><textarea placeholder="Explain the source of funds..."></textarea></div></div></div>
+        <div class="aml-q" id="amlForeign" style="margin-top:8px;"><div class="aml-qt"><strong>🌍 Foreign Assets / Tax Residency</strong><span>Do you hold foreign bank accounts, assets, or tax residency outside India?</span></div><div class="aml-btns"><div class="aml-btn" onclick="amlAnswer('amlForeign','yes',this)">Yes</div><div class="aml-btn" onclick="amlAnswer('amlForeign','no',this)">No</div></div></div>
+        <div id="amlForeignDetail" class="hidden"><div class="sub"><div class="fg"><div class="fld"><label>Country of tax residency</label><input type="text" placeholder="Country"></div><div class="fld"><label>TIN / Equivalent ID</label><input type="text" placeholder="Tax ID number"></div></div></div></div>
+        <div class="aml-q" id="amlCrime" style="margin-top:8px;"><div class="aml-qt"><strong>⚖️ Criminal / Legal History</strong><span>Have you ever been convicted or investigated for financial crime, fraud, or money laundering?</span></div><div class="aml-btns"><div class="aml-btn" onclick="amlAnswer('amlCrime','yes',this)">Yes</div><div class="aml-btn" onclick="amlAnswer('amlCrime','no',this)">No</div></div></div>
+        <div id="amlCrimeDetail" class="hidden"><div class="sub"><div class="fld"><label>Details</label><textarea placeholder="Describe the matter, outcome..."></textarea></div></div></div>
+        <div class="divider"></div>
+        <div class="sub-ttl" style="font-size:0.85rem;font-weight:700;color:var(--ink);margin-bottom:1rem;">💳 Premium Payment</div>
+        <div class="fg">
+          <div class="fld"><label>Payment Mode <span class="req">*</span></label><select onchange="trackField('aml')"><option value="">Select</option><option>Bank Debit (ECS/NACH)</option><option>Cheque</option><option>Net Banking / UPI</option><option>Debit Card</option><option>Credit Card</option></select></div>
+          <div class="fld"><label>Bank Name</label><input type="text" placeholder="e.g. HDFC Bank" oninput="trackField('aml')"></div>
+          <div class="fld"><label>Account Type</label><select><option>Savings</option><option>Current</option><option>NRE</option><option>NRO</option></select></div>
+          <div class="fld"><label>Account Number</label><input type="text" placeholder="Account number" oninput="trackField('aml')"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="saveSection('aml')">✓ Save AML</button>
+          <button class="btn-secondary" onclick="showSection('declaration')">Next: Declaration →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: DECLARATION ===== -->
+    <div class="section-panel" id="panel-declaration">
+      <div class="sec-header">
+        <div class="sec-header-left"><div class="sec-header-icon ic-red">✍️</div><div><div class="sec-ttl">Declaration & Consent</div><div class="sec-sub">Final step — review and confirm your declaration to submit.</div></div></div>
+        <div class="sec-status-badge badge-empty" id="badge-declaration">○ Not started</div>
+      </div>
+      <div class="card">
+        <div style="background:var(--soft);border-radius:14px;padding:1.2rem;margin-bottom:1.25rem;border:1px solid var(--border);">
+          <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.75rem;">📊 Form Completion Summary</div>
+          <div id="completionSummary"></div>
+        </div>
+        <div class="decl-box">
+          <h4>📜 Proposer's Declaration</h4>
+          <p>I/We hereby declare and confirm that all statements given in this proposal form are complete, true and correct to the best of my/our knowledge. I/We understand that any misrepresentation or suppression of material fact may render this policy void, resulting in forfeiture of all premiums paid and denial of claims.</p>
+          <p>I/We agree this proposal form shall form the basis of the insurance contract. I/We confirm I/We have read and understood the Key Feature Document (KFD) and agree to be bound by the same.</p>
+          <label class="decl-chk"><input type="checkbox" id="dec1" onchange="trackField('declaration')"> All information provided is true, complete, and accurate.</label>
+          <label class="decl-chk"><input type="checkbox" id="dec2" onchange="trackField('declaration')"> I consent to collection and sharing of personal data per the Privacy Policy.</label>
+          <label class="decl-chk"><input type="checkbox" id="dec3" onchange="trackField('declaration')"> I understand my right of free-look period (15/30 days) and agree to policy terms.</label>
+          <label class="decl-chk"><input type="checkbox" id="dec4" onchange="trackField('declaration')"> I have not concealed any material information about health, occupation, or finances.</label>
+          <label class="decl-chk"><input type="checkbox" id="dec5" onchange="trackField('declaration')"> I authorise the insurer to seek medical records from any physician or institution.</label>
+        </div>
+        <div class="divider"></div>
+        <div class="sub-ttl" style="font-size:0.85rem;font-weight:700;color:var(--ink);margin-bottom:1rem;">🤝 Agent / Advisor Details</div>
+        <div class="fg g3"><div class="fld"><label>Agent Code</label><input type="text" placeholder="Agent code"></div><div class="fld"><label>Agent Name</label><input type="text" placeholder="Agent full name"></div><div class="fld"><label>Branch Code</label><input type="text" placeholder="Branch code"></div></div>
+        <div class="divider"></div>
+        <div class="sub-ttl" style="font-size:0.85rem;font-weight:700;color:var(--ink);margin-bottom:1rem;">✍️ Digital Signature</div>
+        <div style="border:2px dashed var(--border);border-radius:12px;padding:2rem;text-align:center;background:var(--soft);cursor:pointer;" onclick="signatureDemo()"><div style="font-size:2rem;margin-bottom:0.5rem;" id="signIcon">✍️</div><div style="font-size:0.85rem;color:var(--muted);" id="signText">Click / tap to verify via OTP</div><div id="signConfirm" class="hidden" style="color:var(--teal);font-weight:700;font-size:0.9rem;margin-top:0.5rem;">✅ Signature confirmed</div></div>
+        <div class="fg" style="margin-top:1rem;"><div class="fld"><label>Place of Signing <span class="req">*</span></label><input type="text" placeholder="City / Town"></div><div class="fld"><label>Date <span class="req">*</span></label><input type="date" id="signDate"></div></div>
+        <div class="btn-row">
+          <button class="btn-teal" onclick="submitForm()" style="flex:1;justify-content:center;font-size:0.95rem;padding:14px;">🚀 Submit Proposal</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: REQUIREMENTS / DOCUMENTS ===== -->
+    <div class="section-panel" id="panel-requirements">
+      <div class="sec-header">
+        <div class="sec-header-left"><div class="sec-header-icon ic-red">📎</div><div><div class="sec-ttl">Document Checklist</div><div class="sec-sub">Upload documents for instant AI-powered OCR verification and auto-fill. Status updates in real-time.</div></div></div>
+      </div>
+
+      <div class="nudge red"><span class="nudge-ico">🔍</span><span><strong>AI OCR Active:</strong> Upload documents and Aria will extract Name, DOB, and Address and match them with your form entries. 🟢 Green = matched · 🟡 Amber = partial/unclear · ⚫ Gray = not uploaded</span></div>
+
+      <!-- KYC DOCS -->
+      <div class="req-category">
+        <div class="req-cat-title">🪪 KYC Documents</div>
+
+        <div class="req-item" id="req-aadhaar">
+          <div class="req-icon">🪪</div>
+          <div class="req-text"><div class="req-name">Aadhaar Card</div><div class="req-desc">Both sides · Used for address & identity verification</div></div>
+          <div class="req-status"><div class="req-status-dot dot-gray" id="dot-aadhaar"></div><div class="req-status-txt txt-gray" id="txt-aadhaar">Not uploaded</div></div>
+        </div>
+        <div id="upload-aadhaar" class="req-upload-zone" onclick="document.getElementById('file-aadhaar').click()">
+          <div class="upload-icon">📤</div><p>Drag & drop or tap to upload Aadhaar (JPG, PNG, PDF)</p>
+          <input type="file" id="file-aadhaar" accept="image/*,.pdf" onchange="processDocUpload(this,'aadhaar')">
+        </div>
+        <div id="ocr-status-aadhaar"></div>
+
+        <div class="req-item" id="req-pan" style="margin-top:10px;">
+          <div class="req-icon">💳</div>
+          <div class="req-text"><div class="req-name">PAN Card</div><div class="req-desc">For tax & KYC compliance · Mandatory</div></div>
+          <div class="req-status"><div class="req-status-dot dot-gray" id="dot-pan"></div><div class="req-status-txt txt-gray" id="txt-pan">Not uploaded</div></div>
+        </div>
+        <div id="upload-pan" class="req-upload-zone" onclick="document.getElementById('file-pan').click()">
+          <div class="upload-icon">📤</div><p>Drag & drop or tap to upload PAN Card</p>
+          <input type="file" id="file-pan" accept="image/*,.pdf" onchange="processDocUpload(this,'pan')">
+        </div>
+        <div id="ocr-status-pan"></div>
+
+        <div class="req-item" id="req-photo" style="margin-top:10px;">
+          <div class="req-icon">📷</div>
+          <div class="req-text"><div class="req-name">Passport Photo</div><div class="req-desc">Recent colour photograph (white / light background)</div></div>
+          <div class="req-status"><div class="req-status-dot dot-gray" id="dot-photo"></div><div class="req-status-txt txt-gray" id="txt-photo">Not uploaded</div></div>
+        </div>
+        <div id="upload-photo" class="req-upload-zone" onclick="document.getElementById('file-photo').click()">
+          <div class="upload-icon">📤</div><p>Upload recent passport-size photograph</p>
+          <input type="file" id="file-photo" accept="image/*" onchange="processDocUpload(this,'photo')">
+        </div>
+        <div id="ocr-status-photo"></div>
+      </div>
+
+      <!-- MEDICAL DOCS -->
+      <div class="req-category">
+        <div class="req-cat-title">🩺 Medical Documents</div>
+
+        <div class="req-item" id="req-medical-report">
+          <div class="req-icon">🧪</div>
+          <div class="req-text"><div class="req-name">Recent Blood / Lab Reports</div><div class="req-desc">CBC, lipid panel, blood sugar, liver & kidney function (last 6 months)</div></div>
+          <div class="req-status"><div class="req-status-dot dot-gray" id="dot-medical-report"></div><div class="req-status-txt txt-gray" id="txt-medical-report">Not uploaded</div></div>
+        </div>
+        <div id="upload-medical-report" class="req-upload-zone" onclick="document.getElementById('file-medical-report').click()">
+          <div class="upload-icon">📤</div><p>Upload lab reports (PDF or image)</p>
+          <input type="file" id="file-medical-report" accept="image/*,.pdf" onchange="processDocUpload(this,'medical-report')">
+        </div>
+        <div id="ocr-status-medical-report"></div>
+
+        <div class="req-item" id="req-ecg" style="margin-top:10px;">
+          <div class="req-icon">❤️</div>
+          <div class="req-text"><div class="req-name">ECG Report</div><div class="req-desc">Required for applicants above 45 years · Optional otherwise</div></div>
+          <div class="req-status"><div class="req-status-dot dot-gray" id="dot-ecg"></div><div class="req-status-txt txt-gray" id="txt-ecg">Not uploaded</div></div>
+        </div>
+        <div id="upload-ecg" class="req-upload-zone" onclick="document.getElementById('file-ecg').click()">
+          <div class="upload-icon">📤</div><p>Upload ECG report (PDF or image)</p>
+          <input type="file" id="file-ecg" accept="image/*,.pdf" onchange="processDocUpload(this,'ecg')">
+        </div>
+        <div id="ocr-status-ecg"></div>
+      </div>
+
+      <!-- FINANCIAL DOCS -->
+      <div class="req-category">
+        <div class="req-cat-title">💰 Financial Documents</div>
+
+        <div class="req-item" id="req-itr">
+          <div class="req-icon">📑</div>
+          <div class="req-text"><div class="req-name">Income Tax Returns (ITR)</div><div class="req-desc">Last 2 years · Required for SA above ₹25 Lakh</div></div>
+          <div class="req-status"><div class="req-status-dot dot-gray" id="dot-itr"></div><div class="req-status-txt txt-gray" id="txt-itr">Not uploaded</div></div>
+        </div>
+        <div id="upload-itr" class="req-upload-zone" onclick="document.getElementById('file-itr').click()">
+          <div class="upload-icon">📤</div><p>Upload ITR acknowledgment (PDF)</p>
+          <input type="file" id="file-itr" accept="image/*,.pdf" onchange="processDocUpload(this,'itr')">
+        </div>
+        <div id="ocr-status-itr"></div>
+
+        <div class="req-item" id="req-salary" style="margin-top:10px;">
+          <div class="req-icon">💵</div>
+          <div class="req-text"><div class="req-name">Salary Slips</div><div class="req-desc">Last 3 months · For salaried applicants</div></div>
+          <div class="req-status"><div class="req-status-dot dot-gray" id="dot-salary"></div><div class="req-status-txt txt-gray" id="txt-salary">Not uploaded</div></div>
+        </div>
+        <div id="upload-salary" class="req-upload-zone" onclick="document.getElementById('file-salary').click()">
+          <div class="upload-icon">📤</div><p>Upload salary slips (PDF or image)</p>
+          <input type="file" id="file-salary" accept="image/*,.pdf" onchange="processDocUpload(this,'salary')">
+        </div>
+        <div id="ocr-status-salary"></div>
+
+        <div class="req-item" id="req-bank" style="margin-top:10px;">
+          <div class="req-icon">🏦</div>
+          <div class="req-text"><div class="req-name">Bank Statement</div><div class="req-desc">Last 6 months · Shows premium repayment capacity</div></div>
+          <div class="req-status"><div class="req-status-dot dot-gray" id="dot-bank"></div><div class="req-status-txt txt-gray" id="txt-bank">Not uploaded</div></div>
+        </div>
+        <div id="upload-bank" class="req-upload-zone" onclick="document.getElementById('file-bank').click()">
+          <div class="upload-icon">📤</div><p>Upload bank statement (PDF)</p>
+          <input type="file" id="file-bank" accept="image/*,.pdf" onchange="processDocUpload(this,'bank')">
+        </div>
+        <div id="ocr-status-bank"></div>
+      </div>
+    </div>
+
+    <!-- ===== SUCCESS PAGE ===== -->
+    <div class="section-panel" id="panel-success">
+      <div class="card">
+        <div class="success-wrap">
+          <div class="success-ico">🎉</div>
+          <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:1.5rem;margin-bottom:0.6rem;color:var(--navy);">Proposal Submitted!</div>
+          <div style="color:var(--muted);font-size:0.88rem;line-height:1.7;max-width:420px;margin:0 auto 1.5rem;">Your underwriting proposal has been successfully submitted to ABC Life Insurance. Our team will review within <strong>2–3 business days</strong>. You'll receive an SMS and email update.</div>
+          <div style="background:var(--soft);border-radius:14px;padding:1.2rem;margin:0 auto 1.5rem;max-width:360px;border:2px solid var(--border);">
+            <div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;">Proposal Reference</div>
+            <div style="font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:2px;color:var(--navy);" id="refNumber">ABC-UW-XXXX</div>
+          </div>
+          <div style="background:linear-gradient(135deg,var(--navy) 0%,#0D2A5E 100%);border-radius:16px;padding:1.4rem;margin:0 auto 1.5rem;max-width:420px;color:white;text-align:left;">
+            <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:0.4rem;">{ } Proposal Data Export</div>
+            <div style="font-size:0.78rem;color:rgba(255,255,255,0.65);margin-bottom:1rem;">Download structured JSON — API ready for integration.</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button onclick="downloadJSON()" style="flex:1;padding:10px;background:var(--red);border:none;border-radius:8px;color:var(--ink);font-family:'Sora',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;">📥 Download JSON</button>
+              <button onclick="previewJSON()" style="flex:1;padding:10px;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.25);border-radius:8px;color:white;font-family:'Sora',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;">👁️ Preview</button>
+            </div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem;">Conceptualised by <strong style="color:var(--ink);">Raman Jha</strong> · ABC Life Insurance Smart UW Portal</div>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:340px;margin:1rem auto 0;">
+            <button class="btn-primary" style="flex:1;justify-content:center;" onclick="window.print()">🖨️ Print</button>
+            <button class="btn-secondary" style="flex:1;justify-content:center;" onclick="location.reload()">← New Proposal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+</div><!-- end dashboard -->
+
+<!-- ══════════ ARIA PANEL ══════════ -->
+<div class="aria-overlay hidden" id="ariaOverlay" onclick="if(event.target===this)toggleAriaPanel()">
+  <div class="aria-panel">
+    <div class="aria-panel-hdr">
+      <div class="aria-avatar-wrap" id="ariaAvatarWrap">
+        <div class="aria-avatar" id="ariaAvatar">
+          <svg viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="23" cy="23" r="23" fill="#FDE8D8"/>
+            <ellipse cx="23" cy="36" rx="14" ry="11" fill="#1B4F8A"/>
+            <path d="M14 27 Q13 22 16 19 Q23 16 30 19 Q33 22 32 27" fill="#2563A8"/>
+            <rect x="19" y="27" width="8" height="5" rx="2" fill="white"/>
+            <ellipse cx="23" cy="20" rx="8" ry="9" fill="#D4956A"/>
+            <path d="M15 14 Q15 7 23 6 Q31 7 31 14 Q31 9 23 8 Q15 9 15 14Z" fill="#1A0A00"/>
+            <circle cx="23" cy="7" r="3" fill="#1A0A00"/>
+            <line x1="23" y1="7" x2="23" y2="11" stroke="#1A0A00" stroke-width="0.8"/>
+            <circle cx="23" cy="10" r="1.2" fill="#C8102E"/>
+            <ellipse cx="18.5" cy="19.5" rx="1.8" ry="1.5" fill="white"/><circle cx="18.5" cy="19.5" r="1" fill="#2D1B0E"/>
+            <ellipse cx="27.5" cy="19.5" rx="1.8" ry="1.5" fill="white"/><circle cx="27.5" cy="19.5" r="1" fill="#2D1B0E"/>
+            <path d="M20.5 24 Q23 26 25.5 24" stroke="#BF7A52" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+            <circle cx="14" cy="20" r="1.8" fill="#D4AF37"/>
+            <ellipse cx="14" cy="23" rx="1.2" ry="2" fill="#D4AF37"/>
+            <circle cx="32" cy="20" r="1.8" fill="#D4AF37"/>
+            <ellipse cx="32" cy="23" rx="1.2" ry="2" fill="#D4AF37"/>
+          </svg>
+        </div>
+        <div class="aria-speaking-ring" id="ariaSpeakingRing"></div>
+      </div>
+      <div class="aria-hdr-info">
+        <div class="aria-hdr-name">Aria <span class="waves paused" id="ariaWaves"><span class="w"></span><span class="w"></span><span class="w"></span><span class="w"></span><span class="w"></span></span></div>
+        <div class="aria-hdr-status" id="ariaStatus">ABC Life AI Guide · Ask me anything</div>
+      </div>
+      <button class="aria-close" onclick="toggleAriaPanel()">✕</button>
+    </div>
+    <div class="aria-quick-actions" id="ariaQuickActions">
+      <div class="aria-qa" onclick="ariaQuick('explain')">💡 Explain this section</div>
+      <div class="aria-qa" onclick="ariaQuick('documents')">📄 What docs needed?</div>
+      <div class="aria-qa" onclick="ariaQuick('tips')">✨ Smart tips</div>
+      <div class="aria-qa" onclick="ariaQuick('stop')">🔇 Stop voice</div>
+    </div>
+    <div class="aria-chat" id="ariaChat"></div>
+    <div class="aria-input-row">
+      <input class="aria-input" id="ariaInput" type="text" placeholder="Ask Aria anything about this form..." onkeypress="if(event.key==='Enter')sendAriaMessage()">
+      <button class="aria-voice-btn" id="ariaVoiceBtn" onclick="toggleAriaListen()" title="Speak to Aria">🎙️</button>
+      <button class="aria-send" onclick="sendAriaMessage()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- FLOAT BUTTON -->
+<div class="float-aria">
+  <button class="float-aria-btn" onclick="toggleAriaPanel()" title="Ask Aria">
+    <svg viewBox="0 0 46 46" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="23" cy="36" rx="14" ry="11" fill="#D4AF37" opacity="0.7"/>
+      <ellipse cx="23" cy="20" rx="8" ry="9" fill="#D4956A"/>
+      <path d="M15 14 Q15 7 23 6 Q31 7 31 14 Q31 9 23 8 Q15 9 15 14Z" fill="#1A0A00"/>
+      <circle cx="23" cy="7" r="3" fill="#1A0A00"/>
+      <circle cx="23" cy="10" r="1.2" fill="#C8102E"/>
+      <ellipse cx="18.5" cy="19.5" rx="1.8" ry="1.5" fill="white"/><circle cx="18.5" cy="19.5" r="1.1" fill="#2D1B0E"/>
+      <ellipse cx="27.5" cy="19.5" rx="1.8" ry="1.5" fill="white"/><circle cx="27.5" cy="19.5" r="1.1" fill="#2D1B0E"/>
+      <path d="M20 24 Q23 26.5 26 24" stroke="#BF7A52" stroke-width="1" fill="none" stroke-linecap="round"/>
+    </svg>
+    <div class="float-dot"></div>
+  </button>
+</div>
+
+<!-- JSON MODAL -->
+<div class="modal-overlay hidden" id="jsonModal" onclick="if(event.target===this)document.getElementById('jsonModal').classList.add('hidden')">
+  <div class="modal-box">
+    <div class="modal-hdr"><div class="modal-ttl"><span style="background:var(--navy);padding:3px 9px;border-radius:5px;font-size:0.78rem;">{ }</span> Proposal JSON — API Ready</div></div>
+    <div class="modal-body"><pre id="jsonPreview">Loading...</pre></div>
+    <div class="modal-ftr"><button class="mbtn mbtn-p" onclick="downloadJSON()">📥 Download</button><button class="mbtn mbtn-s" onclick="copyJSON()">📋 Copy</button><button class="mbtn mbtn-x" onclick="document.getElementById('jsonModal').classList.add('hidden')">✕</button></div>
   </div>
 </div>
 
 <script>
-// ── GEMINI CONFIGURATION ──
-// REPLACE THE STRING BELOW WITH YOUR ACTUAL API KEY
-const GEMINI_KEY = 'YOUR_API_KEY_HERE'; 
+'use strict';
 
-const synth = window.speechSynthesis;
-let femaleVoice = null;
+/* ═══════════════════════════════════════════════════
+   GEMINI API CONFIG — Key from sessionStorage only
+═══════════════════════════════════════════════════ */
+const GEMINI_MODELS = [
+  'gemini-2.0-flash',
+  'gemini-1.5-flash',
+  'gemini-1.5-pro',
+  'gemini-1.0-pro'
+];
+let activeGeminiModel = GEMINI_MODELS[0];
 
-function initSpeech() {
-  const findVoices = () => {
-    const voices = synth.getVoices();
-    // Forces high-quality female voices like Google UK English Female or Microsoft Heera
-    femaleVoice = voices.find(v => (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Heera')) && v.lang.includes('en'));
-    if (!femaleVoice) femaleVoice = voices.find(v => v.lang.includes('en'));
-  };
-  findVoices();
-  if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = findVoices;
+function getGeminiKey() { return sessionStorage.getItem('abc_life_gemini_key') || ''; }
+function toggleKeyVis() {
+  const inp = document.getElementById('geminiKeyInput');
+  const btn = document.getElementById('keyToggleBtn');
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁️'; }
+}
+function saveApiKey() {
+  const key = document.getElementById('geminiKeyInput').value.trim();
+  if (!key || key.length < 20) { showToast('⚠️','Please enter a valid Gemini API key'); return; }
+  sessionStorage.setItem('abc_life_gemini_key', key);
+  document.getElementById('keyGate').classList.add('hidden');
+  showToast('🔓','API key saved for this session');
+  initApp();
 }
 
-function ariaSay(text) {
-  synth.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  if (femaleVoice) utter.voice = femaleVoice;
-  utter.pitch = 1.05; utter.rate = 0.95;
-  synth.speak(utter);
-  document.getElementById('ariaSpeech').innerText = text;
+/* ═══ SECTION CONFIG ═══ */
+const SECTIONS = [
+  { id:'profile',     icon:'👤', label:'Customer Profile',    sub:'Identity & Contact' },
+  { id:'proposer',    icon:'📋', label:'Proposer Details',    sub:'Proposer & Nominee' },
+  { id:'occupation',  icon:'💼', label:'Occupation & Income', sub:'Work & Financials' },
+  { id:'health',      icon:'💪', label:'Health Profile',      sub:'Medical Disclosure' },
+  { id:'family',      icon:'👨‍👩‍👧', label:'Family History',      sub:'Hereditary Conditions' },
+  { id:'lifestyle',   icon:'🌟', label:'Lifestyle & Habits',  sub:'Habits & Activity' },
+  { id:'aml',         icon:'🛡️', label:'AML & Compliance',    sub:'PMLA Declarations' },
+  { id:'declaration', icon:'✍️', label:'Declaration',         sub:'Sign & Submit' },
+];
+
+const sectionStatus = {}; // 'empty' | 'partial' | 'complete'
+SECTIONS.forEach(s => sectionStatus[s.id] = 'empty');
+
+let currentSection = 'profile';
+let voiceEnabled = true;
+let ariaOpen = false;
+let ariaListening = false;
+let recognition = null;
+
+/* ═══ INIT ═══ */
+function initApp() {
+  buildSidebarNav();
+  buildMobileNav();
+  buildCompletionSummary();
+  initSpeech();
+  setTimeout(showSplash, 300);
 }
 
-async function askGemini(question) {
-  if (GEMINI_KEY === 'YOUR_API_KEY_HERE') {
-    ariaSay("Namaste! I am Aria. Please add your API key to the code to activate my intelligence engine.");
+function showSplash() {
+  const overlay = document.getElementById('splashOverlay');
+  overlay.classList.remove('hidden');
+  // Speak immediately on splash load (feature #9)
+  setTimeout(() => {
+    ariaSay("Namaste! I am Aria, your ABC Life Insurance guide. Welcome to the Smart Underwriting Portal. You can fill any section in any order. Upload your documents for instant AI verification. I am here to help at every step. Shall we begin?", () => {});
+  }, 600);
+}
+
+function startPortal(withVoice) {
+  voiceEnabled = withVoice;
+  if (!withVoice) { if (window.speechSynthesis) window.speechSynthesis.cancel(); }
+  const overlay = document.getElementById('splashOverlay');
+  overlay.style.animation = 'wFadeOut 0.6s ease forwards';
+  setTimeout(() => { overlay.style.display = 'none'; }, 650);
+  document.getElementById('autofillBox').classList.remove('hidden');
+  showSection('profile');
+  if (withVoice) setTimeout(() => ariaSay(STEP_SCRIPTS.profile), 800);
+}
+
+/* ═══ SIDEBAR & MOBILE NAV BUILD ═══ */
+function buildSidebarNav() {
+  const nav = document.getElementById('sidebarNav');
+  nav.innerHTML = '';
+  SECTIONS.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'nav-section' + (s.id === currentSection ? ' active' : '') + (sectionStatus[s.id] !== 'empty' ? (' ' + (sectionStatus[s.id] === 'complete' ? 'completed' : 'partial')) : '');
+    div.id = 'nav-' + s.id;
+    div.onclick = () => showSection(s.id);
+    const statusDot = sectionStatus[s.id] === 'complete' ? '✓' : (sectionStatus[s.id] === 'partial' ? '~' : '');
+    const statusClass = sectionStatus[s.id] === 'complete' ? 'done' : (sectionStatus[s.id] === 'partial' ? 'partial-st' : 'empty');
+    div.innerHTML = `<div class="nav-section-icon">${s.icon}</div><div class="nav-section-text"><div class="nav-section-name">${s.label}</div><div class="nav-section-sub">${s.sub}</div></div><div class="nav-status ${statusClass}">${statusDot}</div>`;
+    nav.appendChild(div);
+  });
+}
+
+function buildMobileNav() {
+  const mNav = document.getElementById('mobileNav');
+  mNav.innerHTML = '';
+  SECTIONS.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'mnav-item' + (s.id === currentSection ? ' active' : '') + (sectionStatus[s.id] === 'complete' ? ' completed' : '');
+    div.id = 'mnav-' + s.id;
+    div.onclick = () => showSection(s.id);
+    div.innerHTML = s.icon + ' ' + s.label.split(' ')[0];
+    mNav.appendChild(div);
+  });
+  // Requirements button
+  const reqBtn = document.createElement('div');
+  reqBtn.className = 'mnav-item';
+  reqBtn.onclick = () => showSection('requirements');
+  reqBtn.innerHTML = '📎 Docs';
+  mNav.appendChild(reqBtn);
+}
+
+function showSection(id) {
+  currentSection = id;
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+
+  // autofill box only on profile
+  const afBox = document.getElementById('autofillBox');
+  if (afBox) afBox.classList.toggle('hidden', id !== 'profile');
+
+  // Update navs
+  document.querySelectorAll('.nav-section').forEach(n => n.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+  document.querySelectorAll('.mnav-item').forEach(n => n.classList.remove('active'));
+  const mNavEl = document.getElementById('mnav-' + id);
+  if (mNavEl) mNavEl.classList.add('active');
+
+  // Requirements nav btn
+  const reqNavBtn = document.getElementById('reqNavBtn');
+  if (reqNavBtn) reqNavBtn.classList.toggle('active', id === 'requirements');
+
+  // Update completion summary if declaration section
+  if (id === 'declaration') buildCompletionSummary();
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Aria speaks section guide
+  if (voiceEnabled && STEP_SCRIPTS[id]) {
+    setTimeout(() => ariaSay(STEP_SCRIPTS[id]), 400);
+  }
+
+  // Update aria quick actions
+  updateAriaContext(id);
+}
+
+/* ═══ SECTION COMPLETION TRACKING ═══ */
+function trackField(sectionId) {
+  // Mark as partial if any key field is filled
+  const s = sectionId;
+  let filled = 0, total = 0;
+
+  if (s === 'profile') {
+    const fields = ['firstName','lastName','dob','pan','aadhaar','mobile','email','addr1','city','pincode'];
+    total = fields.length;
+    fields.forEach(f => { const el = document.getElementById(f); if (el && el.value.trim()) filled++; });
+    const sel = ['salutation','gender','nationality','marital','state'];
+    total += sel.length;
+    sel.forEach(f => { const el = document.getElementById(f); if (el && el.value) filled++; });
+  } else if (s === 'health') {
+    const h = document.getElementById('height'), w = document.getElementById('weight');
+    if (h && h.value) filled++;
+    if (w && w.value) filled++;
+    total = 2;
+  } else if (s === 'lifestyle') {
+    const smoke = document.querySelector('input[name="smoke"]:checked');
+    const alc = document.querySelector('input[name="alc"]:checked');
+    if (smoke) filled++;
+    if (alc) filled++;
+    total = 2;
+  } else if (s === 'aml') {
+    const answered = document.querySelectorAll('.aml-btn.yes-sel, .aml-btn.no-sel');
+    filled = answered.length;
+    total = 4;
+  } else if (s === 'declaration') {
+    const checks = ['dec1','dec2','dec3','dec4','dec5'];
+    total = checks.length;
+    checks.forEach(id => { const el = document.getElementById(id); if (el && el.checked) filled++; });
+  } else {
+    // generic: any inputs filled
+    const panel = document.getElementById('panel-' + s);
+    if (panel) {
+      panel.querySelectorAll('input:not([type=checkbox]):not([type=radio]), select, textarea').forEach(el => {
+        total++;
+        if (el.value && el.value.trim()) filled++;
+      });
+    }
+  }
+
+  if (total === 0) return;
+  const pct = filled / total;
+  const newStatus = pct >= 0.7 ? 'complete' : (pct > 0 ? 'partial' : 'empty');
+  sectionStatus[s] = newStatus;
+  updateNavStatus(s);
+  updateOverallProgress();
+}
+
+function saveSection(id) {
+  trackField(id);
+  sectionStatus[id] = 'complete';
+  updateNavStatus(id);
+  updateOverallProgress();
+  showToast('✅', 'Section saved!');
+}
+
+function updateNavStatus(id) {
+  const status = sectionStatus[id];
+  const navEl = document.getElementById('nav-' + id);
+  if (!navEl) return;
+  navEl.classList.remove('completed','partial');
+  if (status === 'complete') navEl.classList.add('completed');
+  else if (status === 'partial') navEl.classList.add('partial');
+  const dot = navEl.querySelector('.nav-status');
+  if (dot) {
+    dot.className = 'nav-status ' + (status === 'complete' ? 'done' : (status === 'partial' ? 'partial-st' : 'empty'));
+    dot.textContent = status === 'complete' ? '✓' : (status === 'partial' ? '~' : '');
+  }
+  // Badge update
+  const badge = document.getElementById('badge-' + id);
+  if (badge) {
+    badge.className = 'sec-status-badge ' + (status === 'complete' ? 'badge-complete' : (status === 'partial' ? 'badge-partial' : 'badge-empty'));
+    badge.textContent = status === 'complete' ? '✓ Complete' : (status === 'partial' ? '~ Partial' : '○ Not started');
+  }
+  // Mobile nav
+  const mEl = document.getElementById('mnav-' + id);
+  if (mEl) {
+    mEl.classList.remove('active','completed');
+    if (id === currentSection) mEl.classList.add('active');
+    if (status === 'complete') mEl.classList.add('completed');
+  }
+}
+
+function updateOverallProgress() {
+  const total = SECTIONS.length;
+  const complete = SECTIONS.filter(s => sectionStatus[s.id] === 'complete').length;
+  const partial = SECTIONS.filter(s => sectionStatus[s.id] === 'partial').length;
+  const pct = Math.round(((complete + partial * 0.5) / total) * 100);
+  document.getElementById('overallPct').textContent = pct + '%';
+  document.getElementById('overallBarFill').style.width = pct + '%';
+  document.getElementById('overallBadge').textContent = '📋 ' + pct + '% Complete';
+}
+
+function buildCompletionSummary() {
+  const el = document.getElementById('completionSummary');
+  if (!el) return;
+  el.innerHTML = SECTIONS.map(s => {
+    const status = sectionStatus[s.id];
+    const fillPct = status === 'complete' ? 100 : (status === 'partial' ? 55 : 0);
+    return `<div class="score-bar"><div style="font-size:0.78rem;color:var(--muted);min-width:120px;">${s.icon} ${s.label.split(' ')[0]}</div><div class="score-track"><div class="score-fill" style="width:${fillPct}%"></div></div><div class="score-pct">${fillPct}%</div></div>`;
+  }).join('');
+}
+
+/* ═══ ARIA CONTEXT ═══ */
+const STEP_SCRIPTS = {
+  profile: 'Welcome to the Customer Profile section. Please fill in your personal details — full name, date of birth, PAN, Aadhaar, contact and address. You can upload your Aadhaar or PAN card above and I will auto-fill everything for you instantly using AI OCR!',
+  proposer: 'This is the Proposer Details section. If you are applying for yourself, just tick the checkbox at the top and all details will be copied automatically. Do not forget to add your nominee — the person who will receive the insurance claim.',
+  occupation: 'Now let us fill in your Occupation and Income details. Select your employment type first — this will reveal the relevant follow-up questions. Your income range helps us determine the appropriate sum assured.',
+  health: 'This is the Health Profile section. Please enter your height and weight — I will calculate your BMI automatically. Then select any health conditions you currently have. Honest disclosure here protects your future claims.',
+  family: 'Family Health History is important for underwriting. Please share details about your parents — whether they are alive, their age, and any known conditions like diabetes, heart disease, or cancer. Hereditary conditions can significantly affect your policy terms.',
+  lifestyle: 'Lifestyle and Habits section. Please select your smoking and alcohol status honestly. These directly affect your premium calculation. If you exercise regularly, that works in your favour!',
+  aml: 'These are mandatory Anti-Money Laundering compliance questions required by Indian law under PMLA 2002. For each question, answer Yes or No. Most applicants will answer No to all. Also fill your bank account details for premium payment at the bottom.',
+  declaration: 'You are almost done! This is the final Declaration section. Please read all five statements carefully and tick each checkbox. Then verify your signature using the OTP option. After that, you can submit your proposal!',
+  requirements: 'This is your Document Checklist. Upload your Aadhaar, PAN, photos, medical reports, and financial documents here. As you upload each document, I will extract the text using AI and match it with your form details. Green means matched, amber means partial, gray means not yet uploaded.',
+};
+
+function updateAriaContext(sectionId) {
+  const qactions = document.getElementById('ariaQuickActions');
+  if (!qactions) return;
+  const sectionName = SECTIONS.find(s => s.id === sectionId)?.label || sectionId;
+  qactions.innerHTML = `
+    <div class="aria-qa" onclick="ariaQuick('explain')">💡 Explain ${sectionName}</div>
+    <div class="aria-qa" onclick="ariaQuick('documents')">📄 Docs needed?</div>
+    <div class="aria-qa" onclick="ariaQuick('tips')">✨ Tips for this section</div>
+    <div class="aria-qa" onclick="ariaQuick('stop')">🔇 Stop voice</div>
+  `;
+}
+
+async function ariaQuick(type) {
+  const sectionName = SECTIONS.find(s => s.id === currentSection)?.label || currentSection;
+  let prompt = '';
+  if (type === 'explain') prompt = `Explain what the user needs to fill in the "${sectionName}" section of an Indian life insurance underwriting proposal. Be friendly and concise — 3 sentences max.`;
+  else if (type === 'documents') prompt = `What documents does a customer need for the "${sectionName}" section of an Indian life insurance proposal? List briefly.`;
+  else if (type === 'tips') prompt = `Give 2-3 smart tips for filling the "${sectionName}" section of an Indian life insurance underwriting form accurately.`;
+  else if (type === 'stop') { ariaStopSpeech(); return; }
+  await ariaGeminiChat(prompt);
+}
+
+/* ═══ PHONE LOOKUP ═══ */
+let lookupMethod = 'phone';
+function setLookupMethod(method) {
+  lookupMethod = method;
+  document.querySelectorAll('.lookup-method-btn').forEach(b => b.classList.remove('active-method'));
+  document.getElementById('lm' + method.charAt(0).toUpperCase() + method.slice(1))?.classList.add('active-method');
+  document.getElementById('kycUploadInline').classList.toggle('hidden', method !== 'kyc');
+  if (method === 'manual') showToast('✏️','Fill the form manually below');
+}
+
+async function doPhoneLookup() {
+  const phone = document.getElementById('phoneLookupInput').value.trim();
+  if (!phone || phone.length < 10) { showToast('⚠️','Enter a valid 10-digit mobile number'); return; }
+  setStatus('autofillStatus','🔍 Looking up via open-source APIs...');
+
+  // Try multiple open-source / demo strategies
+  // 1. Simple demo autofill (phone number as seed for demo)
+  // In production: integrate IndiaStack / DigiLocker / eKYC APIs
+  try {
+    const lastFour = phone.slice(-4);
+    // Demo: simulate a lookup result
+    await new Promise(r => setTimeout(r, 1500));
+
+    // Check if Gemini key is available to suggest autofill from uploaded docs instead
+    const key = getGeminiKey();
+    if (!key) {
+      setStatus('autofillStatus','⚠️ Phone lookup requires backend integration. Please upload KYC docs or fill manually.');
+      showToast('📎','Upload KYC documents to auto-fill');
+      return;
+    }
+    // If key available, ask Gemini for a note
+    setStatus('autofillStatus','✅ Phone registered. Please upload Aadhaar/PAN above for full auto-fill via AI OCR.');
+    document.getElementById('mobile').value = phone;
+    document.getElementById('mobile').classList.add('autofilled');
+    trackField('profile');
+    showToast('📱','Mobile number pre-filled! Upload KYC docs to auto-fill remaining fields.');
+  } catch(e) {
+    setStatus('autofillStatus','⚠️ Lookup unavailable. Please fill manually or upload KYC documents.');
+  }
+}
+
+function setStatus(id, msg) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = msg;
+}
+
+/* ═══ OCR & AUTOFILL via Gemini Vision ═══ */
+async function ocrAndAutofill(inputEl, context) {
+  const file = inputEl.files[0];
+  if (!file) return;
+  await processDocUpload(inputEl, 'aadhaar', true); // reuse full OCR flow
+}
+
+async function processDocUpload(inputEl, docType, isAutofillMode = false) {
+  const file = inputEl.files[0];
+  if (!file) return;
+  const key = getGeminiKey();
+
+  // Update UI immediately
+  updateDocStatus(docType, 'amber', '⏳ Processing...');
+  showOcrProcessing(docType, true);
+
+  // Convert file to base64
+  let base64Data, mimeType;
+  try {
+    ({ base64Data, mimeType } = await fileToBase64(file));
+  } catch(e) {
+    updateDocStatus(docType, 'gray', '❌ File read error');
+    showOcrProcessing(docType, false);
+    showOcrResult(docType, 'error', 'Could not read the file. Please try a different format.');
     return;
   }
-  
-  const display = document.getElementById('ariaSpeech');
-  display.innerText = "Aria is thinking...";
-  
-  try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: `You are Aria, a warm HDFC Life assistant. A user is filling out a proposal. Answer briefly: ${question}` }] }]
-      })
-    });
-    const data = await res.json();
-    const reply = data.candidates[0].content.parts[0].text;
-    ariaSay(reply);
-  } catch (e) {
-    ariaSay("I'm having trouble connecting to my engine. Please check your internet or API key.");
+
+  if (!key) {
+    updateDocStatus(docType, 'amber', '⚠️ No API key');
+    showOcrProcessing(docType, false);
+    showOcrResult(docType, 'error', 'Gemini API key required for OCR. Please refresh and enter your key.');
+    return;
   }
-  document.getElementById('ariaQuery').value = '';
+
+  // Try Gemini Vision OCR with model fallback
+  const ocrPrompt = `You are an OCR specialist for Indian documents. Extract all text from this document image.
+
+Document type expected: ${docType.toUpperCase()}
+
+Please extract and return a JSON object with these fields (use null if not found):
+{
+  "doc_type": "detected document type",
+  "name": "full name as printed",
+  "dob": "date of birth in YYYY-MM-DD format if found, else null",
+  "address": "complete address text if found",
+  "id_number": "the main ID number (Aadhaar/PAN/etc)",
+  "other_info": "any other relevant details"
 }
 
-function startApp() {
-  document.getElementById('welcomeOverlay').classList.add('hidden');
-  document.getElementById('assistPanel').classList.add('open');
-  initSpeech();
-  setTimeout(() => {
-    ariaSay("Namaste! I am Aria. I'll be your guide today. Please start by providing your personal details as they appear on your PAN card.");
-  }, 500);
+Return ONLY valid JSON, no other text.`;
+
+  let ocrData = null;
+  let usedModel = null;
+
+  for (const model of GEMINI_MODELS) {
+    try {
+      const resp = await callGeminiVision(key, model, base64Data, mimeType, ocrPrompt);
+      if (resp) {
+        ocrData = resp;
+        usedModel = model;
+        activeGeminiModel = model;
+        break;
+      }
+    } catch(e) {
+      console.warn(`Model ${model} failed:`, e.message);
+      continue;
+    }
+  }
+
+  showOcrProcessing(docType, false);
+
+  if (!ocrData) {
+    // Fallback: mark as uploaded without data match
+    updateDocStatus(docType, 'amber', '⚠️ OCR failed — uploaded');
+    showOcrResult(docType, 'partial', 'Document uploaded but OCR could not extract text. Please verify details manually. (All Gemini models attempted)');
+    // Still mark item as uploaded
+    markDocUploaded(docType);
+    return;
+  }
+
+  // Match extracted data with form fields
+  const matchResult = matchOcrToForm(ocrData, docType);
+  markDocUploaded(docType);
+
+  if (matchResult.allMatched) {
+    updateDocStatus(docType, 'green', '✅ Verified & matched');
+    showOcrResult(docType, 'success', `✅ OCR verified via ${usedModel}. Name: ${ocrData.name || 'N/A'} | DOB: ${ocrData.dob || 'N/A'}. All details match form entries.`);
+    highlightMatchedFields(matchResult.matched, 'matched');
+  } else if (matchResult.anyMatched) {
+    updateDocStatus(docType, 'amber', '🟡 Partial match');
+    const mismatches = matchResult.mismatched.join(', ');
+    showOcrResult(docType, 'partial', `🟡 Partial match via ${usedModel}. Please verify: ${mismatches}. Some details may need manual correction.`);
+    highlightMatchedFields(matchResult.matched, 'matched');
+    highlightMatchedFields(matchResult.mismatched, 'partial-match');
+  } else {
+    updateDocStatus(docType, 'amber', '🟡 No match found');
+    showOcrResult(docType, 'partial', `Document OCR complete (${usedModel}) but extracted data does not match form entries. Please check name, DOB and address.`);
+  }
+
+  // Auto-fill empty fields
+  if (isAutofillMode || true) {
+    autoFillFromOcr(ocrData, docType);
+  }
 }
 
-window.onload = initSpeech;
+function matchOcrToForm(data, docType) {
+  const matched = [];
+  const mismatched = [];
+  const formName = ((document.getElementById('firstName')?.value || '') + ' ' + (document.getElementById('lastName')?.value || '')).trim().toLowerCase();
+  const formDob = document.getElementById('dob')?.value || '';
+  const formPan = document.getElementById('pan')?.value?.toLowerCase() || '';
+  const formAadhaar = document.getElementById('aadhaar')?.value?.replace(/\s/g,'') || '';
+  const formAddr = (document.getElementById('addr1')?.value || '').toLowerCase();
+
+  if (data.name && formName) {
+    const ocrName = data.name.toLowerCase();
+    const nameSim = stringSimilarity(ocrName, formName);
+    if (nameSim > 0.7) matched.push('name');
+    else if (formName) mismatched.push('Name');
+  }
+  if (data.dob && formDob) {
+    matched.push('dob'); // simplified check
+  }
+  if (data.id_number) {
+    const idClean = data.id_number.replace(/\s/g,'').toLowerCase();
+    if (docType === 'pan' && formPan && idClean.includes(formPan.substring(0,6).toLowerCase())) matched.push('pan');
+    else if (docType === 'aadhaar' && formAadhaar && idClean.includes(formAadhaar.substring(0,4))) matched.push('aadhaar');
+  }
+  if (data.address && formAddr) {
+    const addrSim = stringSimilarity(data.address.toLowerCase().substring(0,30), formAddr.substring(0,30));
+    if (addrSim > 0.4) matched.push('address');
+    else if (formAddr) mismatched.push('Address');
+  }
+
+  return {
+    allMatched: matched.length > 0 && mismatched.length === 0,
+    anyMatched: matched.length > 0,
+    matched, mismatched
+  };
+}
+
+function autoFillFromOcr(data, docType) {
+  let filled = false;
+  if (data.name) {
+    const parts = data.name.trim().split(/\s+/);
+    const fnEl = document.getElementById('firstName');
+    const lnEl = document.getElementById('lastName');
+    if (fnEl && !fnEl.value && parts[0]) { fnEl.value = parts[0]; fnEl.classList.add('autofilled'); filled = true; }
+    if (lnEl && !lnEl.value && parts.length > 1) { lnEl.value = parts.slice(1).join(' '); lnEl.classList.add('autofilled'); filled = true; }
+  }
+  if (data.dob) {
+    const dobEl = document.getElementById('dob');
+    if (dobEl && !dobEl.value) { dobEl.value = data.dob; dobEl.classList.add('autofilled'); filled = true; calcAge(); }
+  }
+  if (data.id_number) {
+    if (docType === 'pan') {
+      const panEl = document.getElementById('pan');
+      if (panEl && !panEl.value) { panEl.value = data.id_number.replace(/\s/g,'').toUpperCase(); panEl.classList.add('autofilled'); filled = true; }
+    } else if (docType === 'aadhaar') {
+      const aEl = document.getElementById('aadhaar');
+      if (aEl && !aEl.value) { aEl.value = data.id_number; aEl.classList.add('autofilled'); filled = true; }
+    }
+  }
+  if (data.address) {
+    const addrEl = document.getElementById('addr1');
+    if (addrEl && !addrEl.value) { addrEl.value = data.address.substring(0,100); addrEl.classList.add('autofilled'); filled = true; }
+  }
+  if (filled) {
+    showToast('✨','Form auto-filled from document!');
+    trackField('profile');
+  }
+}
+
+function stringSimilarity(s1, s2) {
+  if (!s1 || !s2) return 0;
+  const longer = s1.length > s2.length ? s1 : s2;
+  const shorter = s1.length > s2.length ? s2 : s1;
+  if (longer.length === 0) return 1;
+  return (longer.length - editDistance(longer, shorter)) / longer.length;
+}
+function editDistance(s1, s2) {
+  const m = s1.length, n = s2.length;
+  const dp = Array.from({length:m+1}, (_,i) => Array.from({length:n+1}, (_,j) => i===0?j:j===0?i:0));
+  for (let i=1;i<=m;i++) for(let j=1;j<=n;j++) dp[i][j] = s1[i-1]===s2[j-1] ? dp[i-1][j-1] : 1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+
+function markDocUploaded(docType) {
+  const uploadZone = document.getElementById('upload-' + docType);
+  if (uploadZone) { uploadZone.style.borderColor = 'var(--teal)'; uploadZone.querySelector('p').textContent = '✅ Document uploaded'; }
+}
+
+function updateDocStatus(docType, color, text) {
+  const dot = document.getElementById('dot-' + docType);
+  const txt = document.getElementById('txt-' + docType);
+  const item = document.getElementById('req-' + docType);
+  if (!dot || !txt) return;
+  // Update colors
+  dot.className = 'req-status-dot ' + (color === 'green' ? 'dot-green' : color === 'amber' ? 'dot-amber' : 'dot-gray');
+  txt.className = 'req-status-txt ' + (color === 'green' ? 'txt-green' : color === 'amber' ? 'txt-amber' : 'txt-gray');
+  txt.textContent = text;
+  if (item) {
+    item.className = 'req-item ' + (color === 'green' ? 'req-green' : color === 'amber' ? 'req-amber' : '');
+  }
+}
+
+function showOcrProcessing(docType, show) {
+  const statusEl = document.getElementById('ocr-status-' + docType);
+  if (!statusEl) return;
+  if (show) {
+    statusEl.innerHTML = '<div class="ocr-processing"><div class="ocr-spinner"></div>AI OCR processing... trying Gemini models</div>';
+  } else {
+    const existing = statusEl.querySelector('.ocr-processing');
+    if (existing) existing.remove();
+  }
+}
+
+function showOcrResult(docType, type, message) {
+  const statusEl = document.getElementById('ocr-status-' + docType);
+  if (!statusEl) return;
+  const typeClass = type === 'success' ? 'success' : type === 'partial' ? 'partial' : 'error';
+  const existing = statusEl.querySelector('.ocr-result');
+  if (existing) existing.remove();
+  const div = document.createElement('div');
+  div.className = 'ocr-result ' + typeClass;
+  div.textContent = message;
+  statusEl.appendChild(div);
+}
+
+function highlightMatchedFields(fields, cssClass) {
+  const fieldMap = { name: ['firstName','lastName'], dob: ['dob'], pan: ['pan'], aadhaar: ['aadhaar'], address: ['addr1'] };
+  fields.forEach(f => {
+    const ids = fieldMap[f] || [];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.classList.remove('matched','partial-match'); el.classList.add(cssClass); const matchEl = document.getElementById(id + 'Match'); if (matchEl) { matchEl.className = 'fld-match ' + (cssClass === 'matched' ? 'ok' : 'partial'); matchEl.textContent = cssClass === 'matched' ? '✅ Verified from document' : '⚠️ Please verify'; } }
+    });
+  });
+}
+
+async function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const result = e.target.result;
+      const base64Data = result.split(',')[1];
+      const mimeType = file.type || 'image/jpeg';
+      resolve({ base64Data, mimeType });
+    };
+    reader.onerror = () => reject(new Error('File read failed'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function callGeminiVision(key, model, base64Data, mimeType, prompt) {
+  // Use vision-capable endpoint
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+  const isImage = mimeType.startsWith('image/');
+  const parts = [];
+  if (isImage) {
+    parts.push({ inline_data: { mime_type: mimeType, data: base64Data } });
+  } else {
+    // PDF - use document part
+    parts.push({ inline_data: { mime_type: 'application/pdf', data: base64Data } });
+  }
+  parts.push({ text: prompt });
+
+  const resp = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ contents: [{ parts }], generationConfig: { temperature: 0.1, maxOutputTokens: 1024 } })
+  });
+  if (!resp.ok) { const err = await resp.text(); throw new Error(`${model}: ${resp.status} ${err.substring(0,100)}`); }
+  const data = await resp.json();
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  if (!text) return null;
+  // Clean and parse JSON
+  const clean = text.replace(/```json|```/g,'').replace(/^[^{[]*/, '').replace(/[^}\]]*$/, '').trim();
+  try { return JSON.parse(clean); } catch(e) { console.warn('OCR JSON parse failed:', clean.substring(0,100)); return { name: null, dob: null, address: null, id_number: null, other_info: text }; }
+}
+
+/* ═══ ARIA CHAT ═══ */
+async function sendAriaMessage() {
+  const input = document.getElementById('ariaInput');
+  const msg = input?.value?.trim();
+  if (!msg) return;
+  input.value = '';
+  addAriaBubble(msg, 'user');
+  await ariaGeminiChat(msg);
+}
+
+async function ariaGeminiChat(userMessage) {
+  const key = getGeminiKey();
+  const sectionName = SECTIONS.find(s => s.id === currentSection)?.label || currentSection;
+
+  // Show typing indicator
+  const typingId = 'typing-' + Date.now();
+  addAriaTyping(typingId);
+
+  if (!key) {
+    removeAriaTyping(typingId);
+    const fallbackMsg = getFallbackResponse(userMessage, sectionName);
+    addAriaBubble(fallbackMsg, 'aria');
+    if (voiceEnabled) ariaSay(fallbackMsg);
+    return;
+  }
+
+  const systemPrompt = `You are Aria, a warm, professional female AI assistant for ABC Life Insurance's Smart Underwriting Portal. The user is currently on the "${sectionName}" section. Answer concisely (2-4 sentences). Use simple, friendly language. You know Indian insurance regulations (IRDAI), medical underwriting, and KYC requirements. Always be helpful and encouraging.`;
+
+  for (const model of GEMINI_MODELS) {
+    try {
+      const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: systemPrompt + '\n\nUser: ' + userMessage }] }],
+          generationConfig: { temperature: 0.7, maxOutputTokens: 512 }
+        })
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (reply) {
+        removeAriaTyping(typingId);
+        addAriaBubble(reply, 'aria');
+        if (voiceEnabled) ariaSay(reply);
+        return;
+      }
+    } catch(e) { console.warn(`Aria model ${model} failed:`, e.message); }
+  }
+
+  // All models failed — fallback to HTML speech
+  removeAriaTyping(typingId);
+  const fallback = getFallbackResponse(userMessage, sectionName);
+  addAriaBubble(fallback, 'aria');
+  if (voiceEnabled) ariaSay(fallback);
+}
+
+function getFallbackResponse(msg, section) {
+  return `I'm here to help with the ${section} section! Please fill in your details carefully and honestly — accurate information ensures your future claims are honoured. If you're unsure about any field, hover over the info icons or ask me again. (Note: AI responses unavailable — check your API key.)`;
+}
+
+function addAriaBubble(text, type) {
+  const chat = document.getElementById('ariaChat');
+  if (!chat) return;
+  const div = document.createElement('div');
+  div.className = 'aria-bubble ' + (type === 'aria' ? 'aria-msg' : 'user-msg');
+  div.textContent = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function addAriaTyping(id) {
+  const chat = document.getElementById('ariaChat');
+  if (!chat) return;
+  const div = document.createElement('div');
+  div.id = id;
+  div.className = 'aria-typing';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function removeAriaTyping(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function toggleAriaPanel() {
+  ariaOpen = !ariaOpen;
+  const overlay = document.getElementById('ariaOverlay');
+  overlay.classList.toggle('hidden', !ariaOpen);
+  if (ariaOpen) {
+    const chat = document.getElementById('ariaChat');
+    if (chat && chat.children.length === 0) {
+      addAriaBubble("Namaste! 👋 I'm Aria, your ABC Life guide. I can explain any section, help with document requirements, or answer any insurance questions. What would you like to know?", 'aria');
+    }
+    if (voiceEnabled) setTimeout(() => ariaSay("Hello! How can I help you today?"), 300);
+  } else {
+    ariaStopSpeech();
+  }
+}
+
+/* ═══ ARIA VOICE INPUT ═══ */
+function toggleAriaListen() {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    showToast('⚠️','Voice input not supported in this browser');
+    return;
+  }
+  if (ariaListening) {
+    if (recognition) recognition.stop();
+    ariaListening = false;
+    document.getElementById('ariaVoiceBtn').classList.remove('listening');
+    return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = 'en-IN';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.onresult = e => {
+    const transcript = e.results[0][0].transcript;
+    document.getElementById('ariaInput').value = transcript;
+    ariaListening = false;
+    document.getElementById('ariaVoiceBtn').classList.remove('listening');
+    sendAriaMessage();
+  };
+  recognition.onerror = () => {
+    ariaListening = false;
+    document.getElementById('ariaVoiceBtn')?.classList.remove('listening');
+  };
+  recognition.onend = () => {
+    ariaListening = false;
+    document.getElementById('ariaVoiceBtn')?.classList.remove('listening');
+  };
+  recognition.start();
+  ariaListening = true;
+  document.getElementById('ariaVoiceBtn').classList.add('listening');
+}
+
+/* ═══ SPEECH SYNTHESIS ═══ */
+let synth = window.speechSynthesis;
+let ariaVoice = null;
+
+function initSpeech() {
+  if (!synth) return;
+  const load = () => {
+    const voices = synth.getVoices();
+    ariaVoice = voices.find(v => v.lang === 'en-IN' && v.name.toLowerCase().includes('female'))
+      || voices.find(v => v.lang === 'en-IN')
+      || voices.find(v => v.lang.startsWith('en') && v.name.toLowerCase().includes('female'))
+      || voices.find(v => v.lang.startsWith('en'))
+      || voices[0] || null;
+  };
+  load();
+  if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = load;
+}
+
+function ariaSay(text, onDone) {
+  if (!voiceEnabled || !synth) { if (onDone) onDone(); return; }
+  synth.cancel();
+  const utt = new SpeechSynthesisUtterance(text.replace(/[🎙️✅❌⚠️📎🩺💰🪪🔍✨📄💡🎉]/g, ''));
+  utt.voice = ariaVoice;
+  utt.rate = 0.93; utt.pitch = 1.05; utt.volume = 1;
+  const ring = document.getElementById('ariaSpeakingRing');
+  const ariaAv = document.getElementById('ariaAvatarWrap');
+  const waves = document.getElementById('ariaWaves');
+  if (ring) ariaAv?.classList.add('aria-speaking');
+  if (waves) waves.classList.remove('paused');
+  utt.onend = utt.onerror = () => {
+    ariaAv?.classList.remove('aria-speaking');
+    if (waves) waves.classList.add('paused');
+    if (onDone) onDone();
+  };
+  synth.speak(utt);
+}
+
+function ariaStopSpeech() {
+  if (synth) synth.cancel();
+  document.getElementById('ariaAvatarWrap')?.classList.remove('aria-speaking');
+  document.getElementById('ariaWaves')?.classList.add('paused');
+}
+
+/* ═══ FORM HELPERS ═══ */
+function calcAge() {
+  const dob = document.getElementById('dob')?.value;
+  if (!dob) return;
+  const today = new Date();
+  const birth = new Date(dob);
+  let age = today.getFullYear() - birth.getFullYear();
+  if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) age--;
+  const el = document.getElementById('ageDisplay');
+  if (el) el.value = age + ' years';
+}
+
+function calcBMI() {
+  const h = parseFloat(document.getElementById('height')?.value);
+  const w = parseFloat(document.getElementById('weight')?.value);
+  if (!h || !w) return;
+  const bmi = (w / ((h/100)**2)).toFixed(1);
+  document.getElementById('bmiVal').textContent = bmi;
+  const cat = document.getElementById('bmiCat');
+  const tip = document.getElementById('bmiTip');
+  cat.className = 'bmi-cat';
+  if (bmi < 18.5) { cat.textContent='Underweight'; cat.classList.add('cat-under'); tip.textContent='Below healthy range'; }
+  else if (bmi < 25) { cat.textContent='Normal ✓'; cat.classList.add('cat-ok'); tip.textContent='Ideal BMI range'; }
+  else if (bmi < 30) { cat.textContent='Overweight'; cat.classList.add('cat-over'); tip.textContent='Slightly above ideal'; }
+  else { cat.textContent='Obese'; cat.classList.add('cat-obese'); tip.textContent='Medical review required'; }
+  document.getElementById('bmiDisplay').classList.remove('hidden');
+}
+
+function handleSalutation() {
+  const sal = document.getElementById('salutation')?.value;
+  const g = document.getElementById('gender');
+  if (!g) return;
+  if (sal === 'Mr.') g.value = 'Male';
+  else if (sal === 'Mrs.' || sal === 'Ms.') g.value = 'Female';
+}
+
+function handleMarital() {
+  const val = document.getElementById('marital')?.value;
+  const el = document.getElementById('spouseReveal');
+  if (el) el.classList.toggle('hidden', val !== 'Married');
+}
+
+function handleProposerSame() {
+  const checked = document.getElementById('proposerSameChk')?.checked;
+  if (checked) {
+    const fn = document.getElementById('firstName')?.value || '';
+    const ln = document.getElementById('lastName')?.value || '';
+    const pn = document.getElementById('propName');
+    const pr = document.getElementById('propRel');
+    const pd = document.getElementById('propDob');
+    if (pn) pn.value = (fn + ' ' + ln).trim();
+    if (pr) pr.value = 'Self';
+    if (pd) pd.value = document.getElementById('dob')?.value || '';
+    showToast('✅','Proposer auto-filled from customer profile');
+  }
+}
+
+function selectOwner(type, el) {
+  document.querySelectorAll('.owner-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function addNominee() {
+  const c = document.getElementById('nomineeContainer');
+  const row = document.createElement('div');
+  row.className = 'nom-row';
+  row.innerHTML = '<div class="fld"><label>Nominee Name</label><input type="text" placeholder="Full name"></div><div class="fld"><label>Relationship</label><select><option value="">Select</option><option>Spouse</option><option>Child</option><option>Parent</option><option>Sibling</option></select></div><div class="fld"><label>Share %</label><input type="number" placeholder="%" min="1" max="100"></div><div style="padding-top:22px;"><button class="btn-rm" onclick="this.closest(\'.nom-row\').remove()">✕</button></div>';
+  c.appendChild(row);
+}
+
+function handleEmpType() {
+  const val = document.getElementById('empType')?.value || '';
+  document.getElementById('salariedFields')?.classList.toggle('hidden', !val.includes('Salaried'));
+  document.getElementById('businessFields')?.classList.toggle('hidden', !(val.includes('Business') || val.includes('Professional')));
+}
+
+function handleToggle(toggleId, fieldsId) {
+  const checked = document.getElementById(toggleId)?.checked;
+  document.getElementById(fieldsId)?.classList.toggle('hidden', !checked);
+}
+
+function addPolicy() {
+  const c = document.getElementById('policyContainer');
+  const div = document.createElement('div');
+  div.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.7rem;background:white;padding:12px;border-radius:10px;border:1px solid var(--border);margin-bottom:8px;';
+  div.innerHTML = '<div class="fld"><label>Insurer</label><input type="text" placeholder="Company"></div><div class="fld"><label>Type</label><select><option>Term</option><option>ULIP</option><option>Endowment</option></select></div><div class="fld"><label>Sum Assured</label><input type="text" placeholder="Amount"></div><div class="fld"><label>Status</label><select><option>In Force</option><option>Lapsed</option></select></div>';
+  c.appendChild(div);
+}
+
+function addSurgery() {
+  const c = document.getElementById('surgeryContainer');
+  const div = document.createElement('div');
+  div.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.7rem;background:white;padding:12px;border-radius:10px;border:1px solid var(--border);margin-top:8px;';
+  div.innerHTML = '<div class="fld"><label>Procedure</label><input type="text" placeholder="e.g. Appendectomy"></div><div class="fld"><label>Year</label><input type="number" placeholder="Year"></div><div class="fld"><label>Hospital</label><input type="text" placeholder="Hospital"></div><div class="fld"><label>Outcome</label><select><option>Fully recovered</option><option>Recovering</option><option>Complications</option></select></div>';
+  c.appendChild(div);
+}
+
+const condDetailsMap = {
+  diabetes: '<div class="sub"><div class="sub-ttl">🩸 Diabetes Details</div><div class="fg g3"><div class="fld"><label>Type</label><select><option>Type 1</option><option>Type 2</option><option>Pre-diabetic</option></select></div><div class="fld"><label>Since (year)</label><input type="number" placeholder="Year"></div><div class="fld"><label>HbA1c</label><input type="text" placeholder="e.g. 7.2%"></div><div class="fld"><label>Medication</label><input type="text" placeholder="Medication"></div><div class="fld"><label>Controlled?</label><select><option>Yes</option><option>Partially</option><option>No</option></select></div></div></div>',
+  hypertension: '<div class="sub"><div class="sub-ttl">💉 Hypertension Details</div><div class="fg g3"><div class="fld"><label>Since (year)</label><input type="number" placeholder="Year"></div><div class="fld"><label>BP Reading</label><input type="text" placeholder="e.g. 130/85 mmHg"></div><div class="fld"><label>Medication</label><input type="text" placeholder="Medicine"></div><div class="fld"><label>Controlled?</label><select><option>Yes</option><option>Partially</option><option>No</option></select></div></div></div>',
+  heart: '<div class="sub"><div class="sub-ttl">❤️ Heart Condition</div><div class="fg"><div class="fld"><label>Condition</label><select><option>CAD</option><option>Heart Failure</option><option>Valve Disorder</option><option>Arrhythmia</option><option>Heart Attack</option><option>Bypass/Angioplasty</option></select></div><div class="fld"><label>Year</label><input type="number" placeholder="Year diagnosed"></div><div class="fld full"><label>Treatment details</label><textarea placeholder="Medications, surgeries..."></textarea></div></div></div>',
+  cancer: '<div class="sub"><div class="sub-ttl">🔬 Cancer Details</div><div class="fg"><div class="fld"><label>Type</label><input type="text" placeholder="e.g. Breast, Colon"></div><div class="fld"><label>Stage</label><select><option>Stage 0/I</option><option>Stage II</option><option>Stage III</option><option>Stage IV</option></select></div><div class="fld"><label>Year diagnosed</label><input type="number" placeholder="Year"></div><div class="fld"><label>Current status</label><select><option>In Remission</option><option>Under treatment</option><option>Recovered</option></select></div></div></div>',
+  kidney: '<div class="sub"><div class="sub-ttl">🫘 Kidney Disease</div><div class="fg g3"><div class="fld"><label>Condition</label><select><option>CKD</option><option>Kidney Stones</option><option>Dialysis</option><option>Transplant</option></select></div><div class="fld"><label>CKD Stage</label><select><option>N/A</option><option>Stage 1</option><option>Stage 2</option><option>Stage 3</option><option>Stage 4</option><option>Stage 5</option></select></div><div class="fld"><label>Since (year)</label><input type="number" placeholder="Year"></div></div></div>',
+  liver: '<div class="sub"><div class="sub-ttl">🫀 Liver Disorder</div><div class="fg g3"><div class="fld"><label>Condition</label><select><option>Fatty Liver</option><option>Hepatitis B</option><option>Hepatitis C</option><option>Cirrhosis</option><option>Other</option></select></div><div class="fld"><label>Since (year)</label><input type="number" placeholder="Year"></div><div class="fld"><label>Last LFT</label><input type="text" placeholder="e.g. SGPT 45"></div></div></div>',
+  thyroid: '<div class="sub"><div class="sub-ttl">🧬 Thyroid Condition</div><div class="fg g3"><div class="fld"><label>Type</label><select><option>Hypothyroidism</option><option>Hyperthyroidism</option><option>Hashimoto\'s</option><option>Graves\' Disease</option></select></div><div class="fld"><label>Since (year)</label><input type="number" placeholder="Year"></div><div class="fld"><label>TSH level</label><input type="text" placeholder="e.g. 3.5 mIU/L"></div><div class="fld"><label>Medication</label><input type="text" placeholder="e.g. Thyroxine"></div></div></div>',
+  asthma: '<div class="sub"><div class="sub-ttl">🌬️ Respiratory Condition</div><div class="fg g3"><div class="fld"><label>Condition</label><select><option>Asthma</option><option>COPD</option><option>Sleep Apnoea</option><option>Other</option></select></div><div class="fld"><label>Severity</label><select><option>Mild</option><option>Moderate</option><option>Severe</option></select></div><div class="fld"><label>Inhaler / Medication</label><input type="text" placeholder="Medication name"></div></div></div>',
+  mental: '<div class="sub"><div class="sub-ttl">🧠 Mental Health</div><div class="fg g3"><div class="fld"><label>Condition</label><select><option>Depression</option><option>Anxiety</option><option>Bipolar</option><option>Schizophrenia</option><option>OCD</option><option>PTSD</option></select></div><div class="fld"><label>Since (year)</label><input type="number" placeholder="Year"></div><div class="fld"><label>Currently stable?</label><select><option>Yes</option><option>Partially</option><option>No</option></select></div></div></div>',
+};
+
+function toggleCond(checkbox, id) {
+  const pill = checkbox.closest('.cond-pill');
+  if (id === 'none') {
+    if (checkbox.checked) {
+      document.querySelectorAll('#conditionGrid .cond-pill input[type=checkbox]').forEach(cb => { if(cb!==checkbox){cb.checked=false;cb.closest('.cond-pill').classList.remove('sel');} });
+      document.getElementById('condDetails').innerHTML = '';
+      pill.classList.add('sel');
+    } else { pill.classList.remove('sel'); }
+    return;
+  }
+  const noneCb = document.querySelector('#pillNone input');
+  if (noneCb?.checked) { noneCb.checked = false; document.getElementById('pillNone').classList.remove('sel'); }
+  checkbox.checked ? pill.classList.add('sel') : pill.classList.remove('sel');
+  const container = document.getElementById('condDetails');
+  const existingId = 'cond-detail-' + id;
+  const existing = document.getElementById(existingId);
+  if (checkbox.checked && !existing && condDetailsMap[id]) {
+    const div = document.createElement('div');
+    div.id = existingId;
+    div.style.marginTop = '1rem';
+    div.innerHTML = condDetailsMap[id];
+    div.style.animation = 'slideIn 0.3s ease';
+    container.appendChild(div);
+    setTimeout(() => div.scrollIntoView({ behavior:'smooth', block:'nearest' }), 50);
+  } else if (!checkbox.checked && existing) {
+    existing.remove();
+  }
+}
+
+function tfp(checkbox) { // toggle family pill
+  checkbox.checked ? checkbox.closest('.cond-pill').classList.add('sel') : checkbox.closest('.cond-pill').classList.remove('sel');
+}
+
+function selectPill(label, group, val) {
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(p => p.classList.remove('sel'));
+  label.classList.add('sel');
+  if (group === 'smokeGroup') {
+    document.getElementById('smokeDetails')?.classList.toggle('hidden', val === 'never');
+  }
+  if (group === 'alcGroup') {
+    document.getElementById('alcDetails')?.classList.toggle('hidden', val === 'never');
+  }
+}
+
+function amlAnswer(questionId, answer, btn) {
+  btn.parentElement.querySelectorAll('.aml-btn').forEach(b => b.className = 'aml-btn');
+  btn.classList.add(answer === 'yes' ? 'yes-sel' : 'no-sel');
+  const detail = document.getElementById(questionId + 'Detail');
+  const card = document.getElementById(questionId);
+  if (detail) { if (answer === 'yes') { detail.classList.remove('hidden'); card.classList.add('flagged'); } else { detail.classList.add('hidden'); card.classList.remove('flagged'); } }
+  trackField('aml');
+}
+
+let signed = false;
+function signatureDemo() {
+  if (!signed) {
+    const otp = prompt('OTP sent to your mobile (demo: enter any 4 digits):');
+    if (otp && otp.length >= 4) {
+      signed = true;
+      document.getElementById('signIcon').textContent = '✅';
+      document.getElementById('signText').textContent = 'Digitally signed & verified';
+      document.getElementById('signConfirm').classList.remove('hidden');
+      showToast('✅','Signature verified!');
+      trackField('declaration');
+    }
+  }
+}
+
+function submitForm() {
+  const checks = ['dec1','dec2','dec3','dec4','dec5'];
+  if (!checks.every(id => document.getElementById(id)?.checked)) {
+    showToast('⚠️','Please accept all 5 declarations'); return;
+  }
+  const { reference, data } = extractFormData();
+  window._lastProposalData = data;
+  window._lastProposalRef = reference;
+  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-success').classList.add('active');
+  document.getElementById('refNumber').textContent = reference;
+  window.scrollTo({ top:0, behavior:'smooth' });
+  showToast('🎉','Proposal submitted successfully!');
+  if (voiceEnabled) setTimeout(() => ariaSay('Congratulations! Your proposal has been successfully submitted to ABC Life Insurance. Your reference number is shown on screen. Please save it. Our team will contact you within 2 to 3 business days. Thank you!'), 400);
+}
+
+/* ═══ JSON EXPORT ═══ */
+function extractFormData() {
+  const ts = new Date().toISOString();
+  const ref = 'ABC-UW-' + Date.now();
+  const gv = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  const gb = id => { const el = document.getElementById(id); return el ? el.checked : false; };
+  const gp = name => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : ''; };
+
+  return {
+    reference: ref,
+    data: {
+      meta: { proposal_reference: ref, timestamp: ts, insurer: 'ABC Life Insurance Co. Ltd.', form_version: '3.0', conceptualised_by: 'Raman Jha', ai_model_used: activeGeminiModel },
+      customer_profile: {
+        salutation: gv('salutation'), first_name: gv('firstName'), middle_name: gv('middleName'), last_name: gv('lastName'),
+        gender: gv('gender'), dob: gv('dob'), age: gv('ageDisplay'), nationality: gv('nationality'), marital_status: gv('marital'),
+        pan: gv('pan'), aadhaar: gv('aadhaar'), passport: gv('passport'),
+        mobile: gv('mobile'), email: gv('email'),
+        address: { line1: gv('addr1'), line2: gv('addr2'), city: gv('city'), state: gv('state'), pin: gv('pincode') }
+      },
+      proposer: { same_as_customer: gb('proposerSameChk'), name: gv('propName'), relationship: gv('propRel') },
+      section_completion: Object.fromEntries(SECTIONS.map(s => [s.id, sectionStatus[s.id]])),
+      occupation: { employment_type: gv('empType'), designation: gv('designation'), annual_income: gv('annualIncome'), hazardous: gb('hazardToggle') },
+      health: { height_cm: gv('height'), weight_kg: gv('weight'), bmi: document.getElementById('bmiVal')?.textContent || '' },
+      lifestyle: { smoking: gp('smoke'), alcohol: gp('alc'), exercise: gp('ex'), diet: gp('diet') },
+      aml: {
+        pep: document.querySelector('#amlPEP .yes-sel') ? 'yes' : 'no',
+        funds_legitimate: document.querySelector('#amlFunds .yes-sel') ? 'yes' : 'no',
+        foreign_assets: document.querySelector('#amlForeign .yes-sel') ? 'yes' : 'no',
+        criminal_history: document.querySelector('#amlCrime .yes-sel') ? 'yes' : 'no',
+      },
+      declaration: { all_accepted: ['dec1','dec2','dec3','dec4','dec5'].every(gb), signature_verified: signed }
+    }
+  };
+}
+
+function downloadJSON() {
+  const { reference, data } = window._lastProposalData ? { reference: window._lastProposalRef, data: window._lastProposalData } : extractFormData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = reference + '.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('📥','JSON downloaded: ' + reference + '.json');
+}
+
+function previewJSON() {
+  const { data } = window._lastProposalData ? { reference: window._lastProposalRef, data: window._lastProposalData } : extractFormData();
+  document.getElementById('jsonPreview').textContent = JSON.stringify(data, null, 2);
+  document.getElementById('jsonModal').classList.remove('hidden');
+}
+
+function copyJSON() {
+  const { data } = window._lastProposalData ? { reference: window._lastProposalRef, data: window._lastProposalData } : extractFormData();
+  navigator.clipboard.writeText(JSON.stringify(data, null, 2)).then(() => { showToast('📋','JSON copied!'); document.getElementById('jsonModal').classList.add('hidden'); });
+}
+
+/* ═══ TOAST ═══ */
+let toastTimer;
+function showToast(icon, msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ═══ BOOTSTRAP ═══ */
+(function() {
+  const existingKey = sessionStorage.getItem('abc_life_gemini_key');
+  if (existingKey) {
+    document.getElementById('keyGate').classList.add('hidden');
+    initApp();
+  }
+  // Set today's date on sign field
+  const sd = document.getElementById('signDate');
+  if (sd) sd.value = new Date().toISOString().split('T')[0];
+
+  // Drag-and-drop for upload zones
+  document.querySelectorAll('.req-upload-zone').forEach(zone => {
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault(); zone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+      const input = zone.querySelector('input[type=file]');
+      if (!input) return;
+      const dt = new DataTransfer(); dt.items.add(file); input.files = dt.files;
+      input.dispatchEvent(new Event('change'));
+    });
+  });
+
+  // @keyframes wFadeOut for splash
+  const style = document.createElement('style');
+  style.textContent = '@keyframes wFadeOut{to{opacity:0;pointer-events:none}}';
+  document.head.appendChild(style);
+})();
 </script>
 </body>
 </html>
