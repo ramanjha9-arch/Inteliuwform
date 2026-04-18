@@ -786,7 +786,7 @@ textarea { resize:vertical; min-height:80px; }
     <h2>ABC Life — Admin Access</h2>
     <p>Enter your Gemini API key to activate AI features.<br>The key is stored only in your browser session and never sent to any server.</p>
     <div class="key-models">
-      <span class="key-model-tag">gemini-2.0-flash</span>
+      <span class="key-model-tag">gemini-3.1-flash-live-preview</span>
       <span class="key-model-tag">gemini-2.5-flash</span>
       <span class="key-model-tag">gemini-1.5-pro</span>
       <span class="key-model-tag">gemini-1.0-pro ↩ fallback</span>
@@ -2330,7 +2330,7 @@ Return ONLY valid JSON:
 }`;
 
   try {
-    for (const model of ['gemini-2.0-flash', 'gemini-1.5-pro']) {
+    for (const model of ['gemini-3.1-flash-live-preview', 'gemini-1.5-pro']) {
       try {
         const resp = await callGeminiVision(key, model, base64Data, mimeType, prompt);
         if (resp && resp.verdict) return resp;
@@ -2421,7 +2421,7 @@ Return ONLY valid JSON:
 }`;
 
   try {
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`;
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-live-preview:generateContent?key=${key}`;
     const resp = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -2655,11 +2655,11 @@ async function testGeminiConnection() {
   if (!key) { setGeminiStatus('offline'); return; }
   setGeminiStatus('connecting');
   try {
-    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-live-preview:generateContent?key=${key}`, {
       method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({ contents:[{parts:[{text:'Hi'}]}], generationConfig:{maxOutputTokens:5} })
     });
-    if (resp.ok) { setGeminiStatus('connected'); activeGeminiModel = 'gemini-2.0-flash'; }
+    if (resp.ok) { setGeminiStatus('connected'); activeGeminiModel = 'gemini-3.1-flash-live-preview'; }
     else { setGeminiStatus('error'); }
   } catch(e) { setGeminiStatus('error'); }
 }
