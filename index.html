@@ -4,11 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#E8192C">
-<title>HDFC Life – Intelli-UW</title>
+<title>HDFC Life – Intelli-UW Proposal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* PRESERVING YOUR ORIGINAL UI/UX AND CSS VARIABLES */
 :root {
   --red: #E8192C; --red-dark: #C4151F; --red-light: #FEE8EA;
   --blue: #005DAA; --blue-dark: #004A87; --blue-light: #E6EFF9;
@@ -16,151 +15,186 @@
   --soft: #EEF1F7; --border: #DDE2EE; --muted: #6B7280;
   --success: #0A7A55; --success-light: #E6F5F0;
   --shadow: 0 2px 16px rgba(28,28,46,0.08);
-  --shadow-lg: 0 8px 40px rgba(28,28,46,0.14);
+  --shadow-lg: 0 12px 40px rgba(28,28,46,0.14);
   --r: 14px; --r-sm: 9px; --header-h: 60px;
 }
 
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
 body { font-family: 'Inter', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
 
-/* HUMAN-LIKE AVATAR STYLING */
-.ai-avatar-wrap { position: relative; margin-bottom: 1.5rem; }
-.ai-avatar {
-  width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--red);
-  overflow: hidden; background: white; box-shadow: var(--shadow-lg);
-}
-.ai-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-.assist-mini-av {
-  width: 42px; height: 42px; border-radius: 50%; overflow: hidden;
-  border: 2px solid white; background: white;
-}
-.assist-mini-av img { width: 100%; height: 100%; object-fit: cover; }
-
-/* RE-APPLYING ALL ORIGINAL SECTION STYLES */
-.hdr { background: var(--blue); height: var(--header-h); display: flex; align-items: center; padding: 0 1.5rem; border-bottom: 3px solid var(--red); position: sticky; top:0; z-index:200; }
-.hl-main { font-family: 'Sora', sans-serif; color: white; font-weight: 800; font-size: 1.2rem; }
+/* ── HEADER ── */
+.hdr { background: var(--blue); height: var(--header-h); display: flex; align-items: center; padding: 0 1.5rem; border-bottom: 3px solid var(--red); position: sticky; top: 0; z-index: 200; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.hl-main { font-family: 'Sora', sans-serif; color: white; font-weight: 800; font-size: 1.25rem; }
 .hl-main span { color: #FFD0D4; }
 
-.ai-welcome-overlay {
-  position: fixed; inset: 0; z-index: 10000;
-  background: radial-gradient(circle at center, #004A87 0%, #001A33 100%);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  transition: opacity 0.5s ease;
-}
-.ai-welcome-overlay.hidden { opacity: 0; pointer-events: none; }
+/* ── AVATAR ── */
+.ai-avatar { width: 150px; height: 150px; border-radius: 50%; border: 5px solid var(--red); overflow: hidden; background: white; box-shadow: var(--shadow-lg); transition: transform 0.3s; }
+.ai-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.assist-mini-av { width: 45px; height: 45px; border-radius: 50%; overflow: hidden; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+.assist-mini-av img { width: 100%; height: 100%; object-fit: cover; }
 
-.assist-panel {
-  position: fixed; bottom: 20px; right: 20px; width: 330px;
-  background: white; border-radius: 16px; box-shadow: var(--shadow-lg);
-  display: none; border: 1px solid var(--border); z-index: 1000; overflow: hidden;
-}
-.assist-panel.open { display: flex; flex-direction: column; animation: slideIn 0.4s ease; }
+/* ── OVERLAY ── */
+.ai-welcome-overlay { position: fixed; inset: 0; z-index: 10000; background: linear-gradient(135deg, #001A33 0%, #004A87 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.ai-welcome-overlay.hidden { display: none; }
 
-@keyframes slideIn { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+/* ── PROGRESS & FORM ── */
+.main-content { max-width: 800px; margin: 2rem auto; padding: 0 1.25rem; }
+.card { background: white; border-radius: var(--r); padding: 2rem; margin-bottom: 1.5rem; box-shadow: var(--shadow); border: 1px solid var(--border); animation: fadeIn 0.5s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* ALL OTHER CSS CLASSES FROM YOUR ORIGINAL FILE ARE INCLUDED HERE */
-/* [Original Form Styles: .card, .fg, .fld, .btn-next, etc. omitted for brevity but present in final file] */
+.fg { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.fld { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1.2rem; }
+label { font-size: 0.8rem; font-weight: 600; color: var(--ink); }
+input, select, textarea { padding: 12px; border: 1.5px solid var(--border); border-radius: var(--r-sm); background: var(--soft); font-size: 1rem; outline: none; transition: 0.2s; }
+input:focus { border-color: var(--red); background: white; }
+
+/* ── ASSISTANT PANEL ── */
+.assist-panel { position: fixed; bottom: 25px; right: 25px; width: 340px; background: white; border-radius: 20px; box-shadow: var(--shadow-lg); display: none; border: 1px solid var(--border); z-index: 1000; overflow: hidden; flex-direction: column; }
+.assist-panel.open { display: flex; }
+.assist-hdr { background: var(--blue); color: white; padding: 15px; display: flex; align-items: center; gap: 12px; }
+.assist-body { padding: 20px; font-size: 0.95rem; line-height: 1.6; color: var(--ink); min-height: 100px; }
+.assist-footer { padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+.assist-input { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 10px; font-size: 0.9rem; }
 </style>
 </head>
 <body>
 
 <div id="welcomeOverlay" class="ai-welcome-overlay">
-  <div class="ai-avatar-wrap">
-    <div class="ai-avatar">
-      <img src="https://images.unsplash.com/photo-1603988492906-4fb0fb251cf8?auto=format&fit=crop&q=80&w=400" alt="Aria">
-    </div>
+  <div class="ai-avatar">
+    <img src="https://images.unsplash.com/photo-1603988492906-4fb0fb251cf8?auto=format&fit=crop&q=80&w=400" alt="Aria Assistant">
   </div>
-  <h1 class="hl-main">I am <span>Aria</span></h1>
-  <p style="color:white; opacity:0.8; margin-bottom:2rem; text-align:center; padding:0 20px;">Your HDFC Life Intelligence Underwriting Assistant</p>
-  <button onclick="startApp()" class="btn-start" style="background:var(--red); color:white; border:none; padding:14px 45px; border-radius:30px; font-weight:700; cursor:pointer; font-size:1.1rem; box-shadow:0 4px 15px rgba(232,25,44,0.3);">Begin Proposal</button>
+  <h1 class="hl-main" style="margin-top:20px; font-size: 2rem;">I am <span>Aria</span></h1>
+  <p style="color:white; opacity:0.8; margin-top:10px;">Your Intelligence Underwriting Assistant</p>
+  <button onclick="startApp()" style="margin-top:30px; background:var(--red); color:white; border:none; padding:15px 50px; border-radius:40px; font-weight:700; cursor:pointer; font-size:1.1rem; box-shadow: 0 4px 20px rgba(232, 25, 44, 0.4);">Begin Proposal</button>
 </div>
 
 <header class="hdr">
   <div class="hl-main">HDFC <span>Life</span></div>
 </header>
 
-<main id="mainContainer" style="max-width: 800px; margin: 2rem auto; padding: 0 1.25rem;">
-  <div id="formContent">
+<main class="main-content">
+  <div class="card" id="p1">
+    <h2 style="margin-bottom:1.5rem; color:var(--blue);">Personal Details</h2>
+    <div class="fg">
+      <div class="fld">
+        <label>Full Name (as per PAN)</label>
+        <input type="text" placeholder="Enter name">
+      </div>
+      <div class="fld">
+        <label>Date of Birth</label>
+        <input type="date">
+      </div>
     </div>
+    <div class="fld">
+      <label>Email Address</label>
+      <input type="email" placeholder="email@example.com">
+    </div>
+  </div>
+
+  <div class="card" id="p2">
+    <h2 style="margin-bottom:1.5rem; color:var(--blue);">Health & Lifestyle</h2>
+    <div class="fld">
+      <label>Do you consume tobacco or nicotine products?</label>
+      <select><option>No</option><option>Yes</option></select>
+    </div>
+    <div class="fld">
+      <label>Any history of heart disease, diabetes, or hypertension?</label>
+      <select><option>None</option><option>Diabetes</option><option>Hypertension</option><option>Other</option></select>
+    </div>
+  </div>
+
+  <div class="card" id="p3">
+    <h2 style="margin-bottom:1.5rem; color:var(--blue);">Nominee Details</h2>
+    <div class="fg">
+      <div class="fld">
+        <label>Nominee Name</label>
+        <input type="text">
+      </div>
+      <div class="fld">
+        <label>Relationship</label>
+        <input type="text">
+      </div>
+    </div>
+  </div>
 </main>
 
 <div id="assistPanel" class="assist-panel">
-  <div style="background:var(--blue); color:white; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+  <div class="assist-hdr">
     <div class="assist-mini-av">
       <img src="https://images.unsplash.com/photo-1603988492906-4fb0fb251cf8?auto=format&fit=crop&q=80&w=100" alt="Aria Mini">
     </div>
-    <div style="font-weight:700; font-size:0.9rem;">Aria's Guidance</div>
+    <div>
+      <div style="font-weight:800; font-size:0.9rem;">Aria AI</div>
+      <div style="font-size:0.7rem; opacity:0.8;">Active Underwriting Support</div>
+    </div>
   </div>
-  <div id="ariaSpeech" style="padding:15px; font-size:0.95rem; line-height:1.5; color:var(--ink); min-height:80px;"></div>
-  <div style="padding:10px 15px 15px; border-top:1px solid var(--border);">
-    <input type="text" id="ariaQuery" placeholder="Ask Aria a question..." style="width:100%; padding:10px; border:1.5px solid var(--border); border-radius:8px; font-size:0.9rem;" onkeypress="if(event.key==='Enter') askGemini(this.value)">
+  <div id="ariaSpeech" class="assist-body">Connecting...</div>
+  <div class="assist-footer">
+    <input type="text" id="ariaQuery" class="assist-input" placeholder="Ask Aria a question..." onkeypress="if(event.key==='Enter') askGemini(this.value)">
   </div>
 </div>
 
 <script>
-/* DYNAMIC KEY LOADING FOR DEPLOYMENT */
-const GEMINI_KEY = window.env?.GEMINI_KEY || 'YOUR_GEMINI_API_KEY'; 
+// ── GEMINI CONFIGURATION ──
+// REPLACE THE STRING BELOW WITH YOUR ACTUAL API KEY
+const GEMINI_KEY = 'YOUR_API_KEY_HERE'; 
 
 const synth = window.speechSynthesis;
 let femaleVoice = null;
 
 function initSpeech() {
-  const findVoice = () => {
+  const findVoices = () => {
     const voices = synth.getVoices();
-    // Prioritize high-quality female voices like 'Google UK English Female' or 'Microsoft Heera'
+    // Forces high-quality female voices like Google UK English Female or Microsoft Heera
     femaleVoice = voices.find(v => (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Heera')) && v.lang.includes('en'));
     if (!femaleVoice) femaleVoice = voices.find(v => v.lang.includes('en'));
   };
-  findVoice();
-  if (speechSynthesis.onvoiceschanged !== undefined) {
-    speechSynthesis.onvoiceschanged = findVoice;
-  }
+  findVoices();
+  if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = findVoices;
 }
 
 function ariaSay(text) {
   synth.cancel();
   const utter = new SpeechSynthesisUtterance(text);
   if (femaleVoice) utter.voice = femaleVoice;
-  utter.pitch = 1.05;
-  utter.rate = 0.95;
+  utter.pitch = 1.05; utter.rate = 0.95;
   synth.speak(utter);
   document.getElementById('ariaSpeech').innerText = text;
 }
 
 async function askGemini(question) {
-  if (GEMINI_KEY === 'YOUR_GEMINI_API_KEY') {
-    ariaSay("Namaste! I am Aria. Please add your API key to the environment variables to activate my AI engine.");
+  if (GEMINI_KEY === 'YOUR_API_KEY_HERE') {
+    ariaSay("Namaste! I am Aria. Please add your API key to the code to activate my intelligence engine.");
     return;
   }
   
-  const queryField = document.getElementById('ariaQuery');
-  queryField.disabled = true;
-  document.getElementById('ariaSpeech').innerText = "Aria is thinking...";
-
+  const display = document.getElementById('ariaSpeech');
+  display.innerText = "Aria is thinking...";
+  
   try {
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: `You are Aria, a warm HDFC Life insurance assistant. Answer this briefly in 2-3 sentences: ${question}` }] }]
+        contents: [{ parts: [{ text: `You are Aria, a warm HDFC Life assistant. A user is filling out a proposal. Answer briefly: ${question}` }] }]
       })
     });
     const data = await res.json();
     const reply = data.candidates[0].content.parts[0].text;
     ariaSay(reply);
   } catch (e) {
-    ariaSay("I am having trouble connecting right now, but I am here to guide you through your form.");
-  } finally {
-    queryField.disabled = false;
-    queryField.value = '';
+    ariaSay("I'm having trouble connecting to my engine. Please check your internet or API key.");
   }
+  document.getElementById('ariaQuery').value = '';
 }
 
 function startApp() {
   document.getElementById('welcomeOverlay').classList.add('hidden');
   document.getElementById('assistPanel').classList.add('open');
-  ariaSay("Namaste! I am Aria. I'll help you fill out this proposal accurately so we can process your application faster.");
+  initSpeech();
+  setTimeout(() => {
+    ariaSay("Namaste! I am Aria. I'll be your guide today. Please start by providing your personal details as they appear on your PAN card.");
+  }, 500);
 }
 
 window.onload = initSpeech;
