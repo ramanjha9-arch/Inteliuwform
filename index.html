@@ -1611,21 +1611,21 @@ textarea { resize:vertical; min-height:80px; }
 
 /* ═══════════════════════════════════════════════════
    GEMINI MODEL REGISTRY — Free-tier first hierarchy
-   Tokens: gemini-2.0-flash-lite > gemini-2.0-flash >
-           gemini-1.5-flash > gemini-2.5-flash-preview >
+   Tokens: gemini-3.1-flash-lite-preview > gemini-2.5-flash >
+           gemini-1.5-flash > gemini-3-flash-preview >
            gemini-1.5-pro > gemini-1.0-pro
 ═══════════════════════════════════════════════════ */
 const ALL_GEMINI_MODELS = [
   {
-    id: 'gemini-2.0-flash-lite',
-    name: 'Gemini 2.0 Flash Lite',
+    id: 'gemini-3.1-flash-lite-preview',
+    name: 'Gemini-3.1-flash-lite-preview',
     meta: 'Fastest · Most free tokens · Best for OCR',
     tier: 'free',
     checked: true
   },
   {
-    id: 'gemini-2.0-flash',
-    name: 'Gemini 2.0 Flash',
+    id: 'gemini-2.5-flash',
+    name: 'Gemini 2.5 Flash',
     meta: 'Fast · Generous free quota · Vision capable',
     tier: 'free',
     checked: true
@@ -1638,8 +1638,8 @@ const ALL_GEMINI_MODELS = [
     checked: true
   },
   {
-    id: 'gemini-1.5-flash-8b',
-    name: 'Gemini 1.5 Flash 8B',
+    id: 'gemini-3-flash-preview',
+    name: 'Gemini-3-flash-preview',
     meta: 'Lightweight · High free RPM · Good fallback',
     tier: 'free',
     checked: true
@@ -1668,7 +1668,7 @@ const ALL_GEMINI_MODELS = [
 ];
 
 // Runtime state
-let activeGeminiModel = 'gemini-2.0-flash-lite';
+let activeGeminiModel = 'gemini-3.1-flash-lite-preview';
 let geminiModeEnabled = true; // false when user skips Gemini
 
 function getGeminiKey() { return sessionStorage.getItem('abc_life_gemini_key') || ''; }
